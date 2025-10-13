@@ -11,8 +11,10 @@ cash = 100
 difficulty = 0
 points = 0
 
-#Wood, Rope, Nails, Fabric, Bandages, Food, Glowing Rock
+itemnames = ["wood", "rope", "nails", "fabric", "bandages", "food", "glowing rock"]
 items = [0, 0, 0, 0, 0, 0, 0]
+
+names = ["Dineth's", "Jay's", "Chris's", "Danny's"]
 
 #Checks validity of input as an integer from 0 to max
 def valid_input(question, max):
@@ -31,6 +33,7 @@ def valid_input(question, max):
 
 #Selects a seed
 def seed_select():
+  global speed
   set_seed = valid_input("Do you want a set seed (1) or not (0)? ", 1)
   if set_seed == 1:
     seed = valid_input("Enter a seed ", 4_294_967_295)
@@ -39,6 +42,7 @@ def seed_select():
     seed = random.randint(0, 4_294_967_295)
     random.seed(seed)
     print("Your Seed is", seed)
+    time.sleep(speed)
 
 #Difficulty selection
 def difficulty_selection():
@@ -79,26 +83,64 @@ def character_creation():
   
 #Shop
 def shop():
-
+  global speed
+  global items
+  global itemnames
+  global cash
+  global name
+  global names
+  print("Welcome to", random.choice(names), "shop!")
+  time.sleep(speed)
+  print("You have", cash, "cash")
+  time.sleep(speed)
+  shop_items = [random.randint(1, 50) for i in range(0, 6)]
+  shop_prices = [random.randint(1, 10) for i in range(0, 6)]
+  print("This shop sells: ")
+  time.sleep(speed)
+  for i in range(0, 6):
+    print(" ", shop_items[i], itemnames[i], "for", shop_prices[i], "cash each")
+    time.sleep(speed)
+  time.sleep(speed)
+  while True:
+    kale = valid_input("What do you want (0) - wood... (7) - exit ")
+    if kale == 7:
+      break
+    time.sleep(speed)
+    apple = valid_input("How much do you want? ", shop_items[kale])
+    time.sleep(speed)
+    cost = apple * shop_prices[kale]
+    if cost > cash:
+      print("You don't have enough money")
+      continue
+    else:
+      cash -= cost
+      items[kale] += apple
+      shop_items[kale] -= apple
 
 #Shipyard
-def shipyard():
+#def shipyard():
 
 
 #Journey
-def journey():
+#def journey():
 
 
 #Final Score
-def final_score():
-  score = 0
+#def final_score():
+  #score = 0
 
-  return score
+  #return score
 
 #Setup
 def setup():
+  global speed
   os.system("clear")
-  speed = valid_input("Speed in seconds (max is 10) ", 10)
+  while True:
+    speed = valid_input("Speed in seconds (max is 10) ", 10)
+    if speed != 0:
+      break
+    else:
+      print("Enter a value greater than 0")
 
   os.system("clear")
   print("Escape from Survival Island")
@@ -125,9 +167,9 @@ def setup():
 def main():
   setup()
   shop()
-  shipyard()
-  journey()
-  final_score()
+  #shipyard()
+  #journey()
+  #final_score()
   
-while True:
-  main()
+
+main()
