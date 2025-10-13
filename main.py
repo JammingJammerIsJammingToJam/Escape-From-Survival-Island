@@ -1,6 +1,7 @@
 import random
 import time
 import os
+import math
 
 speed = 0
 name = ""
@@ -69,12 +70,11 @@ def character_creation():
   points -= max_health - 10
   time.sleep(speed)
 
-  if points < 3:
-    maximum = points
-  else:
-    maximum = 3
-  action_modifier = valid_input("How many points for the action modifier? (max is 3) ", maximum)
-  points -= action_modifier
+  maximum = 3
+  if points < 9:
+    maximum = math.floor(points/3)
+  action_modifier = valid_input("How many points for the action modifier? (1 AM for 3 points) (max input is 3AM) ", maximum)
+  points -= action_modifier * 3
   time.sleep(speed)
   del maximum
 
@@ -91,19 +91,25 @@ def shop():
   global names
   print("Welcome to", random.choice(names), "shop!")
   time.sleep(speed)
-  print("You have", cash, "cash")
-  time.sleep(speed)
   shop_items = [random.randint(1, 50) for i in range(0, 6)]
   shop_prices = [random.randint(1, 10) for i in range(0, 6)]
-  print("This shop sells: ")
-  time.sleep(speed)
-  for i in range(0, 6):
-    print(" ", shop_items[i], itemnames[i], "for", shop_prices[i], "cash each")
-    time.sleep(speed)
   time.sleep(speed)
   while True:
-    kale = valid_input("What do you want (0) - wood... (7) - exit ")
+    print("You have", cash, "cash")
+    time.sleep(speed)
+    print("This shop sells: ")
+    time.sleep(speed)
+    for i in range(0, 6):
+      print(" ", shop_items[i], itemnames[i], "for", shop_prices[i], "cash each")
+      time.sleep(speed)
+    kale = valid_input("What do you want (0) - wood... (7) - display inventory (8) - exit ", 8)
     if kale == 7:
+      print("You have", end=" ")
+      for i in range(0, 5):
+        print(items[i], itemnames[i], end=", ")
+      print(items[5], itemnames[5], end=".\n")
+      continue
+    elif kale == 8:
       break
     time.sleep(speed)
     apple = valid_input("How much do you want? ", shop_items[kale])
