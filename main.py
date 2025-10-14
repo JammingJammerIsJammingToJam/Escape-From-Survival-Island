@@ -80,9 +80,11 @@ def character_creation():
 
   cash *= valid_input("How many points in cash? (100 for 1 point) ", points) + 1
   points -= cash / 100 - 1
-  
+
+shop_prices = []
 #Shop
 def shop():
+  global shop_prices
   global speed
   global items
   global itemnames
@@ -102,14 +104,14 @@ def shop():
     for i in range(0, 6):
       print(" ", shop_items[i], itemnames[i], "for", shop_prices[i], "cash each")
       time.sleep(speed)
-    kale = valid_input("What do you want (0) - wood... (7) - display inventory (8) - exit ", 8)
-    if kale == 7:
+    kale = valid_input("What do you want (0) - wood... (6) - display inventory (7) - exit ", 7)
+    if kale == 6:
       print("You have", end=" ")
       for i in range(0, 5):
         print(items[i], itemnames[i], end=", ")
       print(items[5], itemnames[5], end=".\n")
       continue
-    elif kale == 8:
+    elif kale == 7:
       break
     time.sleep(speed)
     apple = valid_input("How much do you want? ", shop_items[kale])
@@ -124,12 +126,44 @@ def shop():
       shop_items[kale] -= apple
 
 #Shipyard
-#def shipyard():
+def shipyard():
+  global speed
+  global shop_prices
+  global items
+  global itemnames
+  global cash
+  global name
+  global action_modifier
+  os.system("clear")
+  time.sleep(speed)
+  available_ships = ["Raft", "Sailboat", "Yacht", "Galleon"]
+  #wood - rope - nails - fabric
+  ship_repair = [[0, 0, 0, 0], [random.randint(10 - action_modifier, 20 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)]]
+  ship_prices = [0]
+  ship_prices += [sum(shop_prices[i] * ship_repair[j][i] for i in range(0, 4)) for j in range(1, 4)]
+  print("You enter the Shipyard...")
+  time.sleep(speed)
+  print("You approach the Harbourmaster...")
+  time.sleep(speed)
+  print("He points at 4 ships: ")
+  for i in range(0, 4):
+    print("The", available_ships[i], "needs", end = " ")
+    for j in range(0, 3):
+      print(ship_repair[i][j], itemnames[j], end = ", ")
+    print(ship_repair[i][3], itemnames[j], end = ".\n")
 
 
 #Journey
 #def journey():
+  #Action Phase
 
+  #Event Phase
+
+  #Death Check
+
+  #Secondary Action Phase
+
+  #Calculations Phase
 
 #Final Score
 #def final_score():
@@ -173,7 +207,7 @@ def setup():
 def main():
   setup()
   shop()
-  #shipyard()
+  shipyard()
   #journey()
   #final_score()
   
