@@ -270,7 +270,8 @@ def journey():
   #Event Phase
 
   #Death Check
-
+  if health <= 0:
+    return
   #Secondary Action Phase
 
   #Calculations Phase
