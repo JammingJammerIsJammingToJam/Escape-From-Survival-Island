@@ -82,8 +82,10 @@ def character_creation():
   points -= cash / 100 - 1
 
 shop_prices = []
+original_items = 20
 #Shop
 def shop():
+  global original_items
   global shop_prices
   global speed
   global items
@@ -93,7 +95,7 @@ def shop():
   global names
   print("Welcome to", random.choice(names), "shop!")
   time.sleep(speed)
-  shop_items = [random.randint(1, 50) for i in range(0, 6)]
+  shop_items = [random.randint(original_items, 50) for i in range(0, 6)]
   shop_prices = [random.randint(1, 10) for i in range(0, 6)]
   time.sleep(speed)
   while True:
@@ -114,19 +116,35 @@ def shop():
     elif kale == 7:
       break
     time.sleep(speed)
-    apple = valid_input("How much do you want? ", shop_items[kale])
+    jam = valid_input("Buy (0) or Sell (1)? ", 1)
+    apple = valid_input("How much? ", shop_items[kale])
     time.sleep(speed)
     cost = apple * shop_prices[kale]
-    if cost > cash:
-      print("You don't have enough money")
-      continue
+    if jam == 0:
+      if cost > cash:
+        print("You don't have enough money")
+        continue
+      else:
+        cash -= cost
+        items[kale] += apple
+        shop_items[kale] -= apple
     else:
-      cash -= cost
-      items[kale] += apple
-      shop_items[kale] -= apple
-
+      if items[kale] < apple:
+        print("You don't have enough items")
+        continue
+      else:
+        cash += round(0.8 * cost)
+        items[kale] -= apple
+        shop_items[kale] += apple
+shipname = ""
+shiphealth = 0
+shipspeed = 0
 #Shipyard
 def shipyard():
+  global original_items
+  global shipname
+  global shiphealth
+  global shipspeed
   global speed
   global shop_prices
   global items
@@ -134,13 +152,14 @@ def shipyard():
   global cash
   global name
   global action_modifier
+  original_items = 1
   os.system("clear")
   time.sleep(speed)
   available_ships = ["Raft", "Sailboat", "Yacht", "Galleon"]
   #wood - rope - nails - fabric
   ship_repair = [[0, 0, 0, 0], [random.randint(10 - action_modifier, 20 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)]]
   ship_prices = [0]
-  ship_prices += [sum(shop_prices[i] * ship_repair[j][i] for i in range(0, 4)) for j in range(1, 4)]
+  ship_prices += [round(sum(shop_prices[i] * ship_repair[j][i] * 1.2) for i in range(0, 4)) for j in range(1, 4)]
   print("You enter the Shipyard...")
   time.sleep(speed)
   print("You approach the Harbourmaster...")
@@ -148,15 +167,106 @@ def shipyard():
   print("He points at 4 ships: ")
   for i in range(0, 4):
     print("The", available_ships[i], "needs", end = " ")
-    for j in range(0, 3):
+    for j in range(0, 2):
       print(ship_repair[i][j], itemnames[j], end = ", ")
-    print(ship_repair[i][3], itemnames[j], end = ".\n")
+      time.sleep(speed)
+    print(ship_repair[i][2], itemnames[j], end = " and ")
+    time.sleep(speed)
+    print(ship_repair[i][3], itemnames[j], "or", ship_prices[i], end = " cash.\n")
+  text = "Raft (0), Sailboat (1), Yacht (2), or Galleon (3) "
+  maximum = 3
+  if items[6] == 1:
+    print("Noticing your glowing rock, the Harbourmaster points out a shipwrecked submarine at the end of the bay")
+    time.sleep(speed)
+    text = "Raft (0), Sailboat (1), Yacht (2), Galleon (3) or Submarine (4) "
+    maximum += 1
+  while True:
+    kale = valid_input("Buy (0) or Fix (1)? ", 1)
+    time.sleep(speed)
+    apple = valid_input(text, maximum)
+    time.sleep(speed)
+    if apple == 4 and kale == 0:
+      print("You can't buy that")
+      continue
+    not_enough = 0
+    foprint("You have", end=" ")
+      for i in range(0, 5):
+        print(items[i], itemnames[i], end=", ")
+      print(items[5], itemnames[5], end=".\n")
+      continuer i in range(0, 4):
+      if items[i] < ship_repair[apple][i] and kale == 1:
+        print("You don't have enough items")
+        not_enough = 1
+        break
+      elif ship_prices[apple] > cash and kale == 0:
+        print("You don't have enough cash")
+        not_enough = 1
+        break
+    if not_enough == 1:
+      continue
+    break
+  if kale == 0:
+    cash -= ship_prices[apple]
+    print("You bought the", available_ships[apple])
+  elif apple != 4:
+    for i in range(0, 4):
+      items[i] -= ship_repair[apple][i]
+    print("You fixed the", available_ships[apple])
+  else:
+    print("You fixed the submarine")
+  time.sleep(speed)
+  shipname = available_ships[apple]
+  shipspeed = apple + 1
+  shiphealth = (apple + 1) * 5
+  print(shipname, shipspeed, shiphealth, cash)
+  time.sleep(speed)
+
 
 
 #Journey
-#def journey():
+def journey():
+  global shipname
+  global shipspeed
+  global itemnames
+  global items
+  global shiphealth
+  maxship = shiphealth
+  global cash
+  global action_modifier
+  global name
+  global max_health
+  health = max_health
   #Action Phase
-
+  while True:
+    action = valid_input("Repair the " + shipname + " (0), Build (1), Eat Food (2), Use Bandages (3), View Inventory (4), or Set Sail (5)", 5)
+    if action == 5:
+      print("The", shipname, "sets sail!")
+      break
+    elif action == 4:
+      print("You have", end=" ")
+      for i in range(0, 5):
+        print(items[i], itemnames[i], end=", ")
+      print(items[5], itemnames[5], end=" and ")
+      print(cash, "cash", end=".\n")
+      continue
+    elif action == 3:
+      if items[4] == 0:
+        print("You don't have any bandages!")
+        continue
+      deficit = max_health - health
+      maxbandage = math.ceil(deficit / 3)
+      if items[4] < maxbandage:
+        maximum = items[4]
+      else:
+        maximum = maxbandage
+      del maxbandage
+      bandages = valid_input("How many bandages? ", maximum)
+      items[4] -= bandages
+      bandages *= 3
+      if bandages <= deficit:
+        health += bandages
+      else:
+        health += deficit
   #Event Phase
 
   #Death Check
