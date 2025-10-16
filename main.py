@@ -233,8 +233,12 @@ def journey():
   global name
   global max_health
   health = max_health
+  hunger = 100
   #Action Phase
   while True:
+    print("Your health is at", str(health) + "/" + str(max_health))
+    print("Your hunger is at", str(hunger) + "/100")
+    print("Your shiphealth is at", str(shiphealth) + "/" + str(maxship))
     action = valid_input("Repair the " + shipname + " (0), Build (1), Eat Food (2), Use Bandages (3), View Inventory (4), or Set Sail (5)", 5)
     if action == 5:
       print("The", shipname, "sets sail!")
@@ -251,6 +255,9 @@ def journey():
         print("You don't have any bandages!")
         continue
       deficit = max_health - health
+      if deficit == 0:
+        print("You are at max health")
+        continue
       maxbandage = math.ceil(deficit / 3)
       if items[4] < maxbandage:
         maximum = items[4]
@@ -264,6 +271,26 @@ def journey():
         health += bandages
       else:
         health += deficit
+    elif action == 2:
+      if items[5] == 0:
+        print("You don't have any food!")
+      deficit = 100 - hunger
+      if deficit == 0:
+        print("You aren't hungry")
+        continue
+      maxfood = math.ceil(deficit / 5)
+      if items[5] < maxfood:
+        maximum = items[5]
+      else:
+        maximum = maxfood
+      del maxfood
+      food = valid_input("How much food? ", maximum)
+      items[5] -= food
+      food *= 5
+      if food <= deficit:
+        hunger += food
+      else:
+        hunger += deficit
   #Event Phase
 
   #Death Check
