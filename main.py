@@ -133,9 +133,10 @@ def shop():
         print("You don't have enough items")
         continue
       else:
-        cash += round(0.8 * cost)
+        cash += math.floor(0.8 * cost)
         items[kale] -= apple
         shop_items[kale] += apple
+
 shipname = ""
 shiphealth = 0
 shipspeed = 0
@@ -159,7 +160,7 @@ def shipyard():
   #wood - rope - nails - fabric
   ship_repair = [[0, 0, 0, 0], [random.randint(10 - action_modifier, 20 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)]]
   ship_prices = [0]
-  ship_prices += [round(sum(shop_prices[i] * ship_repair[j][i] * 1.2) for i in range(0, 4)) for j in range(1, 4)]
+  ship_prices += [round(sum(shop_prices[i] * ship_repair[j][i] * 1.2 for i in range(0, 4))) for j in range(1, 4)]
   print("You enter the Shipyard...")
   time.sleep(speed)
   print("You approach the Harbourmaster...")
@@ -189,11 +190,7 @@ def shipyard():
       print("You can't buy that")
       continue
     not_enough = 0
-    foprint("You have", end=" ")
-      for i in range(0, 5):
-        print(items[i], itemnames[i], end=", ")
-      print(items[5], itemnames[5], end=".\n")
-      continuer i in range(0, 4):
+    for i in range(0, 4):
       if items[i] < ship_repair[apple][i] and kale == 1:
         print("You don't have enough items")
         not_enough = 1
