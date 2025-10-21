@@ -1,15 +1,17 @@
+#Libraries
 import random
 import time
 import os
 import math
 
+#Initialising variables to be used between procedures
 speed = 0
 name = ""
 max_health = 10
 action_modifier = 0
 cash = 100
 
-difficulty = 0
+difficulty = 0 #0 is easy while 5 is extreme
 points = 0
 
 itemnames = ["wood", "rope", "nails", "fabric", "bandages", "food", "glowing rock"]
@@ -21,12 +23,12 @@ names = ["Dineth's", "Jay's", "Chris's", "Danny's"]
 def valid_input(question, max):
   while True:
     answer = input(question)
-    try:
+    try: #Checks if it is an integer
       answer = int(answer)
     except:
       print("Please enter a valid input")
       continue
-    if answer < 0 or answer > max or answer - round(answer) != 0:
+    if answer < 0 or answer > max or answer - round(answer) != 0: #Checks whether the integer is correct
       print("Please enter a valid input")
       continue
     break
@@ -36,16 +38,16 @@ def valid_input(question, max):
 def seed_select():
   global speed
   set_seed = valid_input("Do you want a set seed (1) or not (0)? ", 1)
-  if set_seed == 1:
+  if set_seed == 1: #The user picks a seed
     seed = valid_input("Enter a seed ", 4_294_967_295)
     random.seed(seed)
-  else:
+  else: #The seed is random
     seed = random.randint(0, 4_294_967_295)
     random.seed(seed)
     print("Your Seed is", seed)
     time.sleep(speed)
 
-#Difficulty selection
+#Select difficulty from 0 to 5
 def difficulty_selection():
   global difficulty
   difficulty = valid_input("Select a difficulty (0) - easy, (5) - extreme ", 5)
@@ -60,16 +62,21 @@ def character_creation():
   global cash
   global points
 
+  #Asks for the name of the character
   name = str(input("What is your name? "))
   time.sleep(speed)
+  
+  #Transforms difficulty into spendable points with the formula 30-5d
   points = 30 - difficulty * 5
-
   print("You have", points, "points to spend")
 
+  #HP = 1P + 10
   max_health += valid_input("How many points in health? ", points)
   points -= max_health - 10
   time.sleep(speed)
 
+  """ Invest points into the Action Modifier that is added or subtracted from rolls for an advantage
+  Created by the formula AM = 3P """
   maximum = 3
   if points < 9:
     maximum = math.floor(points/3)
@@ -78,6 +85,7 @@ def character_creation():
   time.sleep(speed)
   del maximum
 
+  #C = 100P + 100
   cash *= valid_input("How many points in cash? (100 for 1 point) ", points) + 1
   points -= cash / 100 - 1
 
@@ -93,41 +101,64 @@ def shop():
   global cash
   global name
   global names
+  global action_modifier
+
   print("Welcome to", random.choice(names), "shop!")
   time.sleep(speed)
-  shop_items = [random.randint(original_items, 50) for i in range(0, 6)]
-  shop_prices = [random.randint(1, 10) for i in range(0, 6)]
+
+  #Randomises the inventory and prices of the shop with the AM included to give advantage on rolls
+  shop_items = [random.randint(original_items, 50 + action_modifier) for i in range(0, 6)]
+  shop_prices = [random.randint(1, 10 - action_modifier) for i in range(0, 6)]
   time.sleep(speed)
+
   while True:
+    
     print("You have", cash, "cash")
     time.sleep(speed)
+
     print("This shop sells: ")
     time.sleep(speed)
+
+    #Outputs the inventory of the shop and its prices
     for i in range(0, 6):
       print(" ", shop_items[i], itemnames[i], "for", shop_prices[i], "cash each")
       time.sleep(speed)
+    
+    #Asks the user for an input
     kale = valid_input("What do you want (0) - wood... (6) - display inventory (7) - exit ", 7)
+    time.sleep(speed)
+
+    #Displays the user's inventory
     if kale == 6:
       print("You have", end=" ")
       for i in range(0, 5):
         print(items[i], itemnames[i], end=", ")
       print(items[5], itemnames[5], end=".\n")
       continue
+
+    #Exits the shop
     elif kale == 7:
       break
-    time.sleep(speed)
+
+    #How much and whether the user is buying or selling
     jam = valid_input("Buy (0) or Sell (1)? ", 1)
     apple = valid_input("How much? ", shop_items[kale])
     time.sleep(speed)
+
+    #Calculates the total cost
     cost = apple * shop_prices[kale]
+
+    #Buying
     if jam == 0:
-      if cost > cash:
+      if cost > cash: #Not enough cash
         print("You don't have enough money")
         continue
-      else:
+      else: #Enough cash
         cash -= cost
         items[kale] += apple
         shop_items[kale] -= apple
+    
+    #Selling
     else:
       if items[kale] < apple:
         print("You don't have enough items")
@@ -234,7 +265,10 @@ def journey():
   global max_health
   health = max_health
   hunger = 100
+  #Net (Pick up raw materials and occasionally fish) - Farm (Food) - Loom (Rope -> Bandages)
+  buildings = [0, 0, 0]
   #Action Phase
+  current_item = random.randint(0, 4)
   while True:
     print("Your health is at", str(health) + "/" + str(max_health))
     print("Your hunger is at", str(hunger) + "/100")
@@ -291,6 +325,9 @@ def journey():
         hunger += food
       else:
         hunger += deficit
+    elif action == 1:
+
+      
   #Event Phase
 
   #Death Check
