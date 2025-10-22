@@ -290,6 +290,16 @@ def journey():
   hunger = 100
   #Net (Pick up raw materials and occasionally fish) - Farm (Food) - Loom (Rope -> Bandages)
   buildings = [0, 0, 0]
+  """
+  Wood - Rope - Nails - Fabric
+  Randomises the build cost between
+  4 - AM
+  and
+  8 - AM
+  For each material
+  For each item
+  """
+  buildingscost = [[random.randint(4 - action_modifier, 8 - action_modifier) for i in range(0, 4)] for j in range(0, 3)]
   #Action Phase
   current_item = random.randint(0, 4) #What the ship currently needs for repair
   while True:
@@ -356,7 +366,8 @@ def journey():
       else:
         hunger += deficit
     elif action == 1: #Building
-
+      thing_to_build = valid_input("What do you want to build: Net (0), Farm (1) or Loom (2)? ", 2)
+    #elif action == 0: # Repairing the ship
       
   #Event Phase
 
