@@ -1,3 +1,26 @@
+"""
+TODO:
+Journey:
+  Building
+  Repair
+  Random Events
+  Secondary Action Phase
+Final Score:
+  Scoring Calculation
+  Ranks
+Story:
+  Add story
+Plan:
+  Finish Game Plan
+  Do Coding Plan
+Comments:
+  Add comments
+Bug Fixing:
+  Find bugs
+  Fix bugs
+"""
+
+
 #Libraries
 import random
 import time
