@@ -160,11 +160,11 @@ def shop():
     
     #Selling
     else:
-      if items[kale] < apple:
+      if items[kale] < apple: #Not enough items
         print("You don't have enough items")
         continue
-      else:
-        cash += math.floor(0.8 * cost)
+      else: #Enough items
+        cash += math.floor(0.8 * cost) #Buyback is 80% of buy price
         items[kale] -= apple
         shop_items[kale] += apple
 
@@ -185,18 +185,32 @@ def shipyard():
   global name
   global action_modifier
   original_items = 1
+
   os.system("clear")
   time.sleep(speed)
+
+  #Declare ship variables
   available_ships = ["Raft", "Sailboat", "Yacht", "Galleon"]
-  #wood - rope - nails - fabric
+  #wood - rope - nails - fabric (item order)
+  """
+  Randomises the item cost for ship repair
+  The raft is always free
+  From that point on
+  The cost for each item for each ship is between
+  10 - AM
+  and
+  (index+1)*10 - AM
+  """
   ship_repair = [[0, 0, 0, 0], [random.randint(10 - action_modifier, 20 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)]]
   ship_prices = [0]
+  #Calculates the cost of the ship with the previously randomised item prices and ship item costs with a markup of ~20%
   ship_prices += [round(sum(shop_prices[i] * ship_repair[j][i] * 1.2 for i in range(0, 4))) for j in range(1, 4)]
   print("You enter the Shipyard...")
   time.sleep(speed)
   print("You approach the Harbourmaster...")
   time.sleep(speed)
   print("He points at 4 ships: ")
+  #Outputs ships and their item and cash cost
   for i in range(0, 4):
     print("The", available_ships[i], "needs", end = " ")
     for j in range(0, 2):
@@ -207,19 +221,20 @@ def shipyard():
     print(ship_repair[i][3], itemnames[j], "or", ship_prices[i], end = " cash.\n")
   text = "Raft (0), Sailboat (1), Yacht (2), or Galleon (3) "
   maximum = 3
-  if items[6] == 1:
+  if items[6] == 1: #Secret item obtained after a certain score is reached
     print("Noticing your glowing rock, the Harbourmaster points out a shipwrecked submarine at the end of the bay")
     time.sleep(speed)
     text = "Raft (0), Sailboat (1), Yacht (2), Galleon (3) or Submarine (4) "
     maximum += 1
-  while True:
+  while True: #Purchasing loop
     kale = valid_input("Buy (0) or Fix (1)? ", 1)
     time.sleep(speed)
     apple = valid_input(text, maximum)
     time.sleep(speed)
-    if apple == 4 and kale == 0:
+    if apple == 4 and kale == 0: #Player cannot buy the sub, only repair with the glowing rock
       print("You can't buy that")
       continue
+    #Checks whether you have enough to get the ship
     not_enough = 0
     for i in range(0, 4):
       if items[i] < ship_repair[apple][i] and kale == 1:
@@ -233,21 +248,29 @@ def shipyard():
     if not_enough == 1:
       continue
     break
-  if kale == 0:
+  if kale == 0: #Buying
     cash -= ship_prices[apple]
     print("You bought the", available_ships[apple])
-  elif apple != 4:
+  elif apple != 4: #Fixing the ordinary ships
     for i in range(0, 4):
       items[i] -= ship_repair[apple][i]
     print("You fixed the", available_ships[apple])
-  else:
+  else: #The glowing rock is not used up
     print("You fixed the submarine")
   time.sleep(speed)
+  """
+  Name - Speed - Health:
+  Raft - 1 - 5
+  Sailboat - 2 - 10
+  Yacht - 3 - 15
+  Galleon - 4 - 20
+  Submarine - 5 - 25
+  """
   shipname = available_ships[apple]
   shipspeed = apple + 1
   shiphealth = (apple + 1) * 5
-  print(shipname, shipspeed, shiphealth, cash)
-  time.sleep(speed)
+  #print(shipname, shipspeed, shiphealth, cash)
+  #time.sleep(speed)
 
 
 
@@ -268,39 +291,44 @@ def journey():
   #Net (Pick up raw materials and occasionally fish) - Farm (Food) - Loom (Rope -> Bandages)
   buildings = [0, 0, 0]
   #Action Phase
-  current_item = random.randint(0, 4)
+  current_item = random.randint(0, 4) #What the ship currently needs for repair
   while True:
+    #Status report
     print("Your health is at", str(health) + "/" + str(max_health))
     print("Your hunger is at", str(hunger) + "/100")
     print("Your shiphealth is at", str(shiphealth) + "/" + str(maxship))
+    #Possible Actions
     action = valid_input("Repair the " + shipname + " (0), Build (1), Eat Food (2), Use Bandages (3), View Inventory (4), or Set Sail (5)", 5)
-    if action == 5:
+    if action == 5: #Set Sail
       print("The", shipname, "sets sail!")
       break
-    elif action == 4:
+    elif action == 4: #View inventory
       print("You have", end=" ")
+      #Cycles through the item lists and prints out how many you have
       for i in range(0, 5):
         print(items[i], itemnames[i], end=", ")
       print(items[5], itemnames[5], end=" and ")
       print(cash, "cash", end=".\n")
       continue
-    elif action == 3:
+    elif action == 3: #Use Bandages
       if items[4] == 0:
         print("You don't have any bandages!")
         continue
+      #Calculates the maximum number of bandages
       deficit = max_health - health
-      if deficit == 0:
+      if deficit == 0: #No bandages needed
         print("You are at max health")
         continue
-      maxbandage = math.ceil(deficit / 3)
-      if items[4] < maxbandage:
+      maxbandage = math.ceil(deficit / 3) #3HP = 1 Bandage
+      if items[4] < maxbandage: #You don't have enough for full health
         maximum = items[4]
-      else:
+      else: #You have enough bandages for full health
         maximum = maxbandage
-      del maxbandage
+      del maxbandage #Save a little RAM
       bandages = valid_input("How many bandages? ", maximum)
       items[4] -= bandages
       bandages *= 3
+      #Calculates new health
       if bandages <= deficit:
         health += bandages
       else:
