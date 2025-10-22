@@ -333,27 +333,29 @@ def journey():
         health += bandages
       else:
         health += deficit
-    elif action == 2:
+    elif action == 2: #Eating food
+      #Checks for hunger and inventory
       if items[5] == 0:
         print("You don't have any food!")
-      deficit = 100 - hunger
+      deficit = 100 - hunger #Hunger is calculated as Hunger/100
       if deficit == 0:
         print("You aren't hungry")
         continue
-      maxfood = math.ceil(deficit / 5)
-      if items[5] < maxfood:
+      maxfood = math.ceil(deficit / 5) #5HP = 1 Food
+      if items[5] < maxfood: #Not enough food for full hunger
         maximum = items[5]
-      else:
+      else: #Enough food for full hunger
         maximum = maxfood
-      del maxfood
+      del maxfood #Save a little RAM
       food = valid_input("How much food? ", maximum)
       items[5] -= food
       food *= 5
+      #Calculates new hunger
       if food <= deficit:
         hunger += food
       else:
         hunger += deficit
-    elif action == 1:
+    elif action == 1: #Building
 
       
   #Event Phase
@@ -374,8 +376,9 @@ def journey():
 #Setup
 def setup():
   global speed
+
   os.system("clear")
-  while True:
+  while True: #Calculates game speed 1-10s
     speed = valid_input("Speed in seconds (max is 10) ", 10)
     if speed != 0:
       break
@@ -386,19 +389,23 @@ def setup():
   print("Escape from Survival Island")
   time.sleep(speed)
 
+  #Checks for game start
   start = valid_input("Start game (1) or quit (0) ", 1)
   if start == 0:
     quit()
   del start
 
+  #Selects a seed
   os.system("clear")
   seed_select()
   time.sleep(speed)
 
+  #Selects the difficulty
   os.system("clear")
   difficulty_selection()
   time.sleep(speed)
 
+  #Goes into the character creation menu
   character_creation()
   time.sleep(speed)
   os.system("clear")
@@ -411,5 +418,4 @@ def main():
   #journey()
   #final_score()
   
-
 main()
