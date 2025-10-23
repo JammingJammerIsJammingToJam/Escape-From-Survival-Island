@@ -1,10 +1,11 @@
 """
 TODO:
 Journey:
-  Building
-  Repair
-  Random Events
-  Secondary Action Phase
+  Building - Done
+  Repair - In Progress
+  Random Events - Planning
+  Secondary Action Phase - Not Started
+  Calculations Phase - Not Started
 Final Score:
   Scoring Calculation
   Ranks
@@ -13,6 +14,8 @@ Story:
 Plan:
   Finish Game Plan
   Do Coding Plan
+Sleep:
+  add time.sleep(speed) anywhere necessary
 Comments:
   Add comments
 Bug Fixing:
@@ -224,7 +227,7 @@ def shipyard():
   and
   (index+1)*10 - AM
   """
-  ship_repair = [[0, 0, 0, 0], [random.randint(10 - action_modifier, 20 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 40 - action_modifier) for i in range(0, 4)]]
+  ship_repair = [[0, 0, 0, 0], [random.randint(10 - action_modifier, 20 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)]]
   ship_prices = [0]
   #Calculates the cost of the ship with the previously randomised item prices and ship item costs with a markup of ~20%
   ship_prices += [round(sum(shop_prices[i] * ship_repair[j][i] * 1.2 for i in range(0, 4))) for j in range(1, 4)]
@@ -239,9 +242,9 @@ def shipyard():
     for j in range(0, 2):
       print(ship_repair[i][j], itemnames[j], end = ", ")
       time.sleep(speed)
-    print(ship_repair[i][2], itemnames[j], end = " and ")
+    print(ship_repair[i][2], itemnames[2], end = " and ")
     time.sleep(speed)
-    print(ship_repair[i][3], itemnames[j], "or", ship_prices[i], end = " cash.\n")
+    print(ship_repair[i][3], itemnames[3], "or", ship_prices[i], end = " cash.\n")
   text = "Raft (0), Sailboat (1), Yacht (2), or Galleon (3) "
   maximum = 3
   if items[6] == 1: #Secret item obtained after a certain score is reached
@@ -311,8 +314,9 @@ def journey():
   global max_health
   health = max_health
   hunger = 100
-  #Net (Pick up raw materials and occasionally fish) - Farm (Food) - Loom (Rope -> Bandages)
+  #Net (Pick up raw materials and occasionally fish) - Farm (Food) - Loom (Bandages)
   buildings = [0, 0, 0]
+  buildingnames = ["Net", "Farm", "Loom"]
   """
   Wood - Rope - Nails - Fabric
   Randomises the build cost between
@@ -389,7 +393,42 @@ def journey():
       else:
         hunger += deficit
     elif action == 1: #Building
-      thing_to_build = valid_input("What do you want to build: Net (0), Farm (1) or Loom (2)? ", 2)
+      #Outputs the building cost
+      for i in range(0, 3):
+        print("The", buildingnames[i], "needs", end = " ")
+        for j in range(0, 2):
+          print(buildingscost[i][j], itemnames[j], end = ", ")
+          time.sleep(speed)
+        print(buildingscost[i][2], itemnames[2], end = " and ")
+        time.sleep(speed)
+        print(buildingscost[i][3], itemnames[3], end = ".\n")
+
+      thing_to_build = valid_input("What do you want to build: Net (0), Farm (1), Loom (2) or Exit (3)? ", 3)
+      time.sleep(speed)
+
+      if thing_to_build == 3:
+        continue
+
+      #Checks inventory levels
+      not_enough = 0
+      for i in range(0, 4):
+        if items[i] < buildingscost[thing_to_build][i]:
+          print("You don't have enough items")
+          not_enough = 1
+          break
+      if not_enough == 1:
+        continue
+
+      for i in range(0, 4): #Removes items from inventory
+        items[i] -= buildingscost[thing_to_build][i]
+      
+      print("You built a", buildingnames[thing_to_build])
+      time.sleep(speed)
+
+      buildings[thing_to_build] += 1 #Builds the building
+
+      buildingscost[thing_to_build] = [random.randint(4 - action_modifier, 8 - action_modifier) for i in range(0, 4)] #Randomises the building's cost
+
     #elif action == 0: # Repairing the ship
       
   #Event Phase
