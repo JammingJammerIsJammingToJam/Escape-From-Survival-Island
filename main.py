@@ -4,7 +4,6 @@ Journey:
   Building - Done
   Repair - Done
   Random Events - Planning
-  Secondary Action Phase - Not Started
   Calculations Phase - Not Started
 Final Score:
   Scoring Calculation
@@ -299,9 +298,11 @@ def shipyard():
   #time.sleep(speed)
 
 
-
+days = 0
+distance = 0
 #Journey
 def journey():
+  global days
   global shipname
   global shipspeed
   global itemnames
@@ -312,6 +313,7 @@ def journey():
   global action_modifier
   global name
   global max_health
+  global distance
   health = max_health
   hunger = 100
   #Net (Pick up raw materials and occasionally fish) - Farm (Food) - Loom (Bandages)
@@ -330,138 +332,230 @@ def journey():
   #Action Phase
   current_repair = random.randint(0, 4) #What the ship currently needs for repair
   repair_amount = random.randint(1, 6 - action_modifier)
+  #Initialises 19 events
+  #You have a chance at reaching land after day 5
+  events = ["You Arrive at Land - Your Journey is Over!",
+            "You encounter a Floating Trading Post",
+            "You encounter a Floating Trading Post",
+            "You encounter a Floating Trading Post",
+            "You encounter a Floating Trading Post",
+            "You Pray To Eleuxaos and you are granted a boon!",
+            "You get a wonderful night's sleep", 
+            "A fish washes up on your boat", 
+            "8", 
+            "9", 
+            "10",
+            "11", 
+            "12", 
+            "13", 
+            "You get a fever!", 
+            "You pray to Eleuxaos but nothing appears...",
+            "Some of your supplies are washed away...", 
+            "A Storm batters you and your ship", 
+            "A Kraken attacks your ship!", 
+            "Rhamnaer strikes you with his Karambit!"]
   while True:
-    #Status report
-    print("Your health is at", str(health) + "/" + str(max_health))
-    print("Your hunger is at", str(hunger) + "/100")
-    print("Your shiphealth is at", str(shiphealth) + "/" + str(maxship))
-    #Possible Actions
-    action = valid_input("Repair the " + shipname + " (0), Build (1), Eat Food (2), Use Bandages (3), View Inventory (4), or Set Sail (5)", 5)
-    if action == 5: #Set Sail
-      print("The", shipname, "sets sail!")
-      break
-    elif action == 4: #View inventory
-      print("You have", end=" ")
-      #Cycles through the item lists and prints out how many you have
-      for i in range(0, 5):
-        print(items[i], itemnames[i], end=", ")
-      print(items[5], itemnames[5], end=" and ")
-      print(cash, "cash", end=".\n")
-      continue
-    elif action == 3: #Use Bandages
-      if items[4] == 0:
-        print("You don't have any bandages!")
-        continue
-      #Calculates the maximum number of bandages
-      deficit = max_health - health
-      if deficit == 0: #No bandages needed
-        print("You are at max health")
-        continue
-      maxbandage = math.ceil(deficit / 3) #3HP = 1 Bandage
-      if items[4] < maxbandage: #You don't have enough for full health
-        maximum = items[4]
-      else: #You have enough bandages for full health
-        maximum = maxbandage
-      del maxbandage #Save a little RAM
-      bandages = valid_input("How many bandages? ", maximum)
-      items[4] -= bandages
-      bandages *= 3
-      #Calculates new health
-      if bandages <= deficit:
-        health += bandages
-      else:
-        health += deficit
-    elif action == 2: #Eating food
-      #Checks for hunger and inventory
-      if items[5] == 0:
-        print("You don't have any food!")
-      deficit = 100 - hunger #Hunger is calculated as Hunger/100
-      if deficit == 0:
-        print("You aren't hungry")
-        continue
-      maxfood = math.ceil(deficit / 5) #5HP = 1 Food
-      if items[5] < maxfood: #Not enough food for full hunger
-        maximum = items[5]
-      else: #Enough food for full hunger
-        maximum = maxfood
-      del maxfood #Save a little RAM
-      food = valid_input("How much food? ", maximum)
-      items[5] -= food
-      food *= 5
-      #Calculates new hunger
-      if food <= deficit:
-        hunger += food
-      else:
-        hunger += deficit
-    elif action == 1: #Building
-      #Outputs the buildings' cost
-      for i in range(0, 3):
-        print("The", buildingnames[i], "needs", end = " ")
-        for j in range(0, 2):
-          print(buildingscost[i][j], itemnames[j], end = ", ")
-          time.sleep(speed)
-        print(buildingscost[i][2], itemnames[2], end = " and ")
-        time.sleep(speed)
-        print(buildingscost[i][3], itemnames[3], end = ".\n")
-
-      thing_to_build = valid_input("What do you want to build: Net (0), Farm (1), Loom (2) or Exit (3)? ", 3)
-      time.sleep(speed)
-
-      if thing_to_build == 3:
-        continue
-
-      #Checks inventory levels
-      not_enough = 0
-      for i in range(0, 4):
-        if items[i] < buildingscost[thing_to_build][i]:
-          print("You don't have enough items")
-          not_enough = 1
-          break
-      if not_enough == 1:
-        continue
-
-      for i in range(0, 4): #Removes items from inventory
-        items[i] -= buildingscost[thing_to_build][i]
-      
-      print("You built a", buildingnames[thing_to_build], end = "!\n")
-      time.sleep(speed)
-
-      buildings[thing_to_build] += 1 #Builds the building
-
-      buildingscost[thing_to_build] = [random.randint(4 - action_modifier, 8 - action_modifier) for i in range(0, 4)] #Randomises the building's cost
-
-    elif action == 0: # Repairing the ship
-      if shiphealth == maxship:
-        print("Your ship is at full HP")
-        continue
-      deficit = maxship - shiphealth
+    days += 1
+    while True:
+      #Status report
+      print("It is Day", days, "of the voyage")
+      print("Your health is at", str(health) + "/" + str(max_health))
+      print("Your hunger is at", str(hunger) + "/100")
       print("Your shiphealth is at", str(shiphealth) + "/" + str(maxship))
-      time.sleep(speed)
-      print("It will take", repair_amount, itemnames[current_repair], "to fix by 5HP")
-      time.sleep(speed)
-      option = valid_input("Repair (0) or Exit (1)? ", 1)
-      time.sleep(speed)
-      if option == 1:
+      #Possible Actions
+      action = valid_input("Repair the " + shipname + " (0), Build (1), Eat Food (2), Use Bandages (3), View Inventory (4), or Set Sail (5)", 5)
+      if action == 5: #Set Sail
+        print("The", shipname, "sets sail!")
+        break
+      elif action == 4: #View inventory
+        print("You have", end=" ")
+        #Cycles through the item lists and prints out how many you have
+        for i in range(0, 5):
+          print(items[i], itemnames[i], end=", ")
+        print(items[5], itemnames[5], end=" and ")
+        print(cash, "cash", end=".\n")
         continue
-      if items[current_repair] < repair_amount:
-        print("You don't have enough items")
-        continue
-      items[current_repair] -= repair_amount
-      if deficit < 5:
-        shiphealth = maxship
+      elif action == 3: #Use Bandages
+        if items[4] == 0:
+          print("You don't have any bandages!")
+          continue
+        #Calculates the maximum number of bandages
+        deficit = max_health - health
+        if deficit == 0: #No bandages needed
+          print("You are at max health")
+          continue
+        maxbandage = math.ceil(deficit / 3) #3HP = 1 Bandage
+        if items[4] < maxbandage: #You don't have enough for full health
+          maximum = items[4]
+        else: #You have enough bandages for full health
+          maximum = maxbandage
+        del maxbandage #Save a little RAM
+        bandages = valid_input("How many bandages? ", maximum)
+        items[4] -= bandages
+        bandages *= 3
+        #Calculates new health
+        if bandages <= deficit:
+          health += bandages
+        else:
+          health += deficit
+      elif action == 2: #Eating food
+        #Checks for hunger and inventory
+        if items[5] == 0:
+          print("You don't have any food!")
+        deficit = 100 - hunger #Hunger is calculated as Hunger/100
+        if deficit == 0:
+          print("You aren't hungry")
+          continue
+        maxfood = math.ceil(deficit / 5) #5HP = 1 Food
+        if items[5] < maxfood: #Not enough food for full hunger
+          maximum = items[5]
+        else: #Enough food for full hunger
+          maximum = maxfood
+        del maxfood #Save a little RAM
+        food = valid_input("How much food? ", maximum)
+        items[5] -= food
+        food *= 5
+        #Calculates new hunger
+        if food <= deficit:
+          hunger += food
+        else:
+          hunger += deficit
+      elif action == 1: #Building
+        #Outputs the buildings' cost
+        for i in range(0, 3):
+          print("The", buildingnames[i], "needs", end = " ")
+          for j in range(0, 2):
+            print(buildingscost[i][j], itemnames[j], end = ", ")
+            time.sleep(speed)
+          print(buildingscost[i][2], itemnames[2], end = " and ")
+          time.sleep(speed)
+          print(buildingscost[i][3], itemnames[3], end = ".\n")
+
+        thing_to_build = valid_input("What do you want to build: Net (0), Farm (1), Loom (2) or Exit (3)? ", 3)
+        time.sleep(speed)
+
+        if thing_to_build == 3:
+          continue
+
+        #Checks inventory levels
+        not_enough = 0
+        for i in range(0, 4):
+          if items[i] < buildingscost[thing_to_build][i]:
+            print("You don't have enough items")
+            not_enough = 1
+            break
+        if not_enough == 1:
+          continue
+
+        for i in range(0, 4): #Removes items from inventory
+          items[i] -= buildingscost[thing_to_build][i]
+        
+        print("You built a", buildingnames[thing_to_build], end = "!\n")
+        time.sleep(speed)
+
+        buildings[thing_to_build] += 1 #Builds the building
+
+        buildingscost[thing_to_build] = [random.randint(4 - action_modifier, 8 - action_modifier) for i in range(0, 4)] #Randomises the building's cost
+
+      elif action == 0: # Repairing the ship
+        if shiphealth == maxship:
+          print("Your ship is at full HP")
+          continue
+        deficit = maxship - shiphealth
+        print("Your shiphealth is at", str(shiphealth) + "/" + str(maxship))
+        time.sleep(speed)
+        print("It will take", repair_amount, itemnames[current_repair], "to fix by 5HP")
+        time.sleep(speed)
+        option = valid_input("Repair (0) or Exit (1)? ", 1)
+        time.sleep(speed)
+        if option == 1:
+          continue
+        if items[current_repair] < repair_amount:
+          print("You don't have enough items")
+          continue
+        items[current_repair] -= repair_amount
+        if deficit < 5:
+          shiphealth = maxship
+        else:
+          shiphealth += 5
+    #Event Phase
+    if days < 5:
+      event = random.randint(1, len(events) - action_modifier - 1)
+    else:
+      event = random.randint(0, len(events) - action_modifier - 1)
+    print(events[event])
+    time.sleep(speed)
+    if event == 0: #Arrival - ends game
+      return 0
+    elif event in [1, 2, 3, 4]: #Trading Post - shop 
+      shop()
+    elif event == 5: #Successful Prayer - gives items
+      for i in range(0, 6):
+        change = random.randint(1, 3+action_modifier)
+        items[i] += change
+        print("You received", change, itemnames[i], "!")
+        time.sleep(speed)
+    elif event == 6: #Good night's sleep
+      deficit = max_health - health
+      change = random.randint(1, 3+action_modifier)
+      if deficit == 0:
+        print("You already have full health")
+      elif deficit < change:
+        health = max_health
+        print("You gained", deficit, "health!")
       else:
-        shiphealth += 5
-  #Event Phase
+        health += change
+        print("You gained", change, "health!")
+      time.sleep()
+    elif event == 7: #Fish on your boat
+      change = random.randint(1, 3+action_modifier)
+      items[5] += change
+      print("You gained", change, "food!")
+      time.sleep(speed)
+    elif event == 8:
+      
+    elif event == 9:
 
-  #Death Check
-  if health <= 0:
-    return
-  if shiphealth <= 0:
-    return
+    elif event == 10:
+    
+    elif event == 11:
+
+    elif event == 12:
+
+    elif event == 13:
+
+    elif event == 14: #Fever
+
+    #15 - nothing happens
+
+    elif event == 16: #Supplies washed away
+      for i in range(0, 6):
+        if items[i] == 0:
+          print("You didn't have any", itemnames[i], "in the first place!")
+          time.sleep(speed)
+          continue
+        change = random.randint(1, 5-action_modifier)
+        if items[i] <= change:
+          items[i] = 0
+          print("You lost all of your", itemnames[i], end = "!\n")
+        else:
+          items[i] -= change
+          print("You lost", change, itemnames[i], end = "!\n")
+        time.sleep(speed)
+    elif event == 17: #Storm
+
+    elif event == 18: #Kraken
+
+    elif event == 19: #Rhamnaer and his karambit
+
+    
+    #Death Check
+    if health <= 0:
+      return 1
+    if shiphealth <= 0:
+      return 1
   
-  #Secondary Action Phase
-
-  #Calculations Phase
+    #Calculations Phase
 
 #Final Score
 #def final_score():
@@ -511,7 +605,7 @@ def main():
   setup()
   shop()
   shipyard()
-  #journey()
+  journey()
   #final_score()
   
 main()
