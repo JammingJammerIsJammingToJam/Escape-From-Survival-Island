@@ -224,7 +224,7 @@ def shipyard():
   and
   (index+1)*10 - AM
   """
-  ship_repair = [[0, 0, 0, 0], [random.randint(10 - action_modifier, 20 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)]]
+  ship_repair = [[0, 0, 0, 0], [random.randint(10 - action_modifier, 20 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 30 - action_modifier) for i in range(0, 4)], [random.randint(10 - action_modifier, 40 - action_modifier) for i in range(0, 4)]]
   ship_prices = [0]
   #Calculates the cost of the ship with the previously randomised item prices and ship item costs with a markup of ~20%
   ship_prices += [round(sum(shop_prices[i] * ship_repair[j][i] * 1.2 for i in range(0, 4))) for j in range(1, 4)]
