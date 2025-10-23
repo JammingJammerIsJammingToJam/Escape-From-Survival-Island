@@ -2,7 +2,7 @@
 TODO:
 Journey:
   Building - Done
-  Repair - In Progress
+  Repair - Done
   Random Events - Planning
   Secondary Action Phase - Not Started
   Calculations Phase - Not Started
@@ -328,7 +328,8 @@ def journey():
   """
   buildingscost = [[random.randint(4 - action_modifier, 8 - action_modifier) for i in range(0, 4)] for j in range(0, 3)]
   #Action Phase
-  current_item = random.randint(0, 4) #What the ship currently needs for repair
+  current_repair = random.randint(0, 4) #What the ship currently needs for repair
+  repair_amount = random.randint(1, 6 - action_modifier)
   while True:
     #Status report
     print("Your health is at", str(health) + "/" + str(max_health))
@@ -393,7 +394,7 @@ def journey():
       else:
         hunger += deficit
     elif action == 1: #Building
-      #Outputs the building cost
+      #Outputs the buildings' cost
       for i in range(0, 3):
         print("The", buildingnames[i], "needs", end = " ")
         for j in range(0, 2):
@@ -422,20 +423,42 @@ def journey():
       for i in range(0, 4): #Removes items from inventory
         items[i] -= buildingscost[thing_to_build][i]
       
-      print("You built a", buildingnames[thing_to_build])
+      print("You built a", buildingnames[thing_to_build], end = "!\n")
       time.sleep(speed)
 
       buildings[thing_to_build] += 1 #Builds the building
 
       buildingscost[thing_to_build] = [random.randint(4 - action_modifier, 8 - action_modifier) for i in range(0, 4)] #Randomises the building's cost
 
-    #elif action == 0: # Repairing the ship
-      
+    elif action == 0: # Repairing the ship
+      if shiphealth == maxship:
+        print("Your ship is at full HP")
+        continue
+      deficit = maxship - shiphealth
+      print("Your shiphealth is at", str(shiphealth) + "/" + str(maxship))
+      time.sleep(speed)
+      print("It will take", repair_amount, itemnames[current_repair], "to fix by 5HP")
+      time.sleep(speed)
+      option = valid_input("Repair (0) or Exit (1)? ", 1)
+      time.sleep(speed)
+      if option == 1:
+        continue
+      if items[current_repair] < repair_amount:
+        print("You don't have enough items")
+        continue
+      items[current_repair] -= repair_amount
+      if deficit < 5:
+        shiphealth = maxship
+      else:
+        shiphealth += 5
   #Event Phase
 
   #Death Check
   if health <= 0:
     return
+  if shiphealth <= 0:
+    return
+  
   #Secondary Action Phase
 
   #Calculations Phase
