@@ -20,6 +20,8 @@ Comments:
 Bug Fixing:
   Find bugs
   Fix bugs
+Variables:
+  Fix Variable Names
 """
 
 
@@ -453,7 +455,7 @@ def journey():
         thing_to_build = valid_input("What do you want to build: Net (0), Farm (1), Loom (2) or Exit (3)? ", 3)
         time.sleep(speed)
 
-        if thing_to_build == 3:
+        if thing_to_build == 3: #Exit
           continue
 
         #Checks inventory levels
@@ -463,7 +465,7 @@ def journey():
             print("You don't have enough items")
             not_enough = 1
             break
-        if not_enough == 1:
+        if not_enough == 1: #Not enough items
           time.sleep(speed)
           continue
 
@@ -482,25 +484,27 @@ def journey():
           print("Your ship is at full HP")
           continue
         deficit = maxship - shiphealth
+        #Status Report
         print("Your shiphealth is at", str(shiphealth) + "/" + str(maxship))
         time.sleep(speed)
         print("It will take", repair_amount, itemnames[current_repair], "to fix by 5HP")
         time.sleep(speed)
         option = valid_input("Repair (0) or Exit (1)? ", 1)
         time.sleep(speed)
-        if option == 1:
+        if option == 1: #Exit
           continue
-        if items[current_repair] < repair_amount:
+        if items[current_repair] < repair_amount: #Not enough items
           print("You don't have enough items")
           continue
         items[current_repair] -= repair_amount
+        #Calculates new shiphealth
         if deficit < 5:
           shiphealth = maxship
         else:
           shiphealth += 5
     #Event Phase
     distance_multiplier = 1
-    if days < 5:
+    if days < 5: #You can only finish the journey after Day 5
       event = random.randint(1, len(events) - action_modifier - 1)
     else:
       event = random.randint(0, len(events) - action_modifier - 1)
@@ -519,8 +523,9 @@ def journey():
     elif event == 6: #Good night's sleep - heals
       deficit = max_health - health
       change = random.randint(1, 3+action_modifier)
-      if deficit == 0:
+      if deficit == 0: #Full health
         print("You already have full health")
+      #Calculates health
       elif deficit < change:
         health = max_health
         print("You gained", deficit, "health!")
@@ -555,7 +560,7 @@ def journey():
       time.sleep(speed)
     elif event == 13: #Pirates - lose items
       for i in range(0, 4):
-        if items[i] < 3:
+        if items[i] < 3: #Can lose max 3 of each item
           maximum = items[i]
         else:
           maximum = 3
@@ -576,76 +581,85 @@ def journey():
 
     elif event == 16: #Supplies washed away - lose items
       for i in range(0, 6):
-        if items[i] == 0:
+        if items[i] == 0: #No items
           print("You didn't have any", itemnames[i], "in the first place!")
           time.sleep(speed)
           continue
         change = random.randint(1, 5-action_modifier)
-        if items[i] <= change:
+        if items[i] <= change: #Lost everything
           items[i] = 0
           print("You lost all of your", itemnames[i], end = "!\n")
-        else:
+        else: #Didn't lose everything
           items[i] -= change
           print("You lost", change, itemnames[i], end = "!\n")
         time.sleep(speed)
+    
     elif event == 17: #Storm - deals damage to player and ship
+      #Player Damage
       change = random.randint(1, 5-action_modifier)
       health -= change
       print(f"You took {change} damage!")
       time.sleep(speed)
+      #Ship Damage
       change = random.randint(1, 7-action_modifier)
       shiphealth -= change
       print(f"Your ship took {change} damage!")
       time.sleep(speed)
     elif event == 18: #Kraken - deals damage to player and ship
+      #Player Damage
       change = random.randint(1, 6-action_modifier)
       health -= change
       print(f"You took {change} damage!")
       time.sleep(speed)
+      #Ship Damage
       change = random.randint(1, 8-action_modifier)
       shiphealth -= change
       print(f"Your ship took {change} damage!")
       time.sleep(speed)
     elif event == 19: #Rhamnaer and his karambit - deals damage to player and ship
+      #Player Damage
       change = random.randint(1, 7-action_modifier)
       health -= change
       print(f"You took {change} damage!")
       time.sleep(speed)
+      #Ship Damage
       change = random.randint(1, 9-action_modifier)
       shiphealth -= change
       print(f"Your ship took {change} damage!")
       time.sleep(speed)
 
-    #Hunger Check
+    #Starvation Check
     if hunger == 0:
       change = random.randint(0, 4-action_modifier)
       health -= change
       print(f"You lost {change} health due to starvation!")
 
-    #Death Check
+    #Player Death Check
     if health <= 0:
       print("You died!")
       time.sleep(speed)
       return 1
+    
+    #Ship Broken Check
     if shiphealth <= 0:
       print(f"Your {shipname} broke!")
       return 1
   
     #Calculations Phase
-    hunger -= random.randint(5, 10-action_modifier)  #Calculates hunger
+    hunger -= random.randint(5, 10-action_modifier)  #Calculates new hunger value
     if hunger < 0:
       hunger = 0
     
     #Calculates items gained from nets
     changes = [0, 0, 0, 0, 0]
-    for i in range(buildings[0]):
+    for i in range(buildings[0]): #Which nets got which stuff
       changes[random.randint(0, 5)] += 1
-    for i in range(4):
+    for i in range(4): #How much of said stuff did the nets gather
       change = sum(random.randint(0, 1+action_modifier) for j in range(changes[i]))
       print(f"Your nets gathered {change} {itemnames[i]}!")
       items[i] += change
       time.sleep(speed)
-    change = sum(random.randint(0, 1+action_modifier) for j in range(changes[4]))
+    change = sum(random.randint(0, 1+action_modifier) for j in range(changes[4])) #Food/Fish because it is a different place in the items list
     print(f"Your nets gathered {change} fish!")
     items[5] += change
     time.sleep(speed)
@@ -667,8 +681,10 @@ def journey():
     distance += change
     print(f"You sailed {change} miles!")
     time.sleep(speed)
+
+    #Separates each day
     print("")
-    print("****************************") #Separates each day
+    print("****************************")
     print("")
 
 #Final Score
