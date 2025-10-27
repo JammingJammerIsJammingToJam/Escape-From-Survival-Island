@@ -1,20 +1,20 @@
 """
 TODO:
-Journey:
+Journey: - Done
   Building - Done
   Repair - Done
   Random Events - Done
   Calculations Phase - Done
 Final Score:
-  Scoring Calculation
-  Ranks
-Story:
-  Add story
+  Scoring Calculation - Planning
+  Ranks - Planning
+Story: 
+  Add story - Planning
 Plan:
-  Finish Game Plan
-  Do Coding Plan
+  Finish Game Plan - In Progress
+  Do Coding Plan - Not Started
 Sleep:
-  add time.sleep(speed) anywhere necessary
+  Add time.sleep(speed) anywhere necessary - In Progress
 Comments:
   Add comments
 Bug Fixing:
@@ -40,7 +40,7 @@ difficulty = 0 #0 is easy while 5 is extreme
 points = 0
 
 itemnames = ["wood", "rope", "nails", "fabric", "bandages", "food", "glowing rock"]
-items = [0, 0, 0, 0, 0, 0, 0]
+items = [0, 0, 0, 0, 0, 0, 1]
 
 names = ["Dineth's", "Jay's", "Chris's", "Danny's"]
 
@@ -241,10 +241,9 @@ def shipyard():
     print("The", available_ships[i], "needs", end = " ")
     for j in range(0, 2):
       print(ship_repair[i][j], itemnames[j], end = ", ")
-      time.sleep(speed)
     print(ship_repair[i][2], itemnames[2], end = " and ")
-    time.sleep(speed)
     print(ship_repair[i][3], itemnames[3], "or", ship_prices[i], end = " cash.\n")
+    time.sleep(speed)
   text = "Raft (0), Sailboat (1), Yacht (2), or Galleon (3) "
   maximum = 3
   if items[6] == 1: #Secret item obtained after a certain score is reached
@@ -252,6 +251,7 @@ def shipyard():
     time.sleep(speed)
     text = "Raft (0), Sailboat (1), Yacht (2), Galleon (3) or Submarine (4) "
     maximum += 1
+    available_ships.append("Submarine")
   while True: #Purchasing loop
     kale = valid_input("Buy (0) or Fix (1)? ", 1)
     time.sleep(speed)
@@ -260,6 +260,8 @@ def shipyard():
     if apple == 4 and kale == 0: #Player cannot buy the sub, only repair with the glowing rock
       print("You can't buy that")
       continue
+    elif apple == 4:
+      break
     #Checks whether you have enough to get the ship
     not_enough = 0
     for i in range(0, 4):
@@ -357,13 +359,12 @@ def journey():
             "Rhamnaer strikes you with his Karambit!"]
   while True:
     days += 1
-    print("****************************")
     time.sleep(speed)
     print("It is Day", days, "of the voyage")
     time.sleep(speed)
     while True:
       #Status report
-      print("\n")
+      print("")
       print("Your health is at", str(health) + "/" + str(max_health))
       print("Your hunger is at", str(hunger) + "/100")
       print("Your shiphealth is at", str(shiphealth) + "/" + str(maxship))
@@ -526,7 +527,7 @@ def journey():
       else:
         health += change
         print("You gained", change, "health!")
-      time.sleep()
+      time.sleep(speed)
     elif event == 7: #Fish on your boat - gives food
       change = random.randint(1, 3+action_modifier)
       items[5] += change
@@ -666,6 +667,9 @@ def journey():
     distance += change
     print(f"You sailed {change} miles!")
     time.sleep(speed)
+    print("")
+    print("****************************") #Separates each day
+    print("")
 
 #Final Score
 #def final_score(outcome):
