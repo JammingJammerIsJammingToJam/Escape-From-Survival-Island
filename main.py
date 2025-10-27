@@ -21,7 +21,7 @@ Bug Fixing:
   Find bugs
   Fix bugs
 Variables:
-  Fix Variable Names
+  Fix Variable Names - Done
 """
 
 
@@ -152,11 +152,11 @@ def shop():
       time.sleep(speed)
     
     #Asks the user for an input
-    kale = valid_input("What do you want (0) - wood... (6) - display inventory (7) - exit ", 7)
+    option = valid_input("What do you want (0) - wood... (6) - display inventory (7) - exit ", 7)
     time.sleep(speed)
 
     #Displays the user's inventory
-    if kale == 6:
+    if option == 6:
       print("You have", end=" ")
       for i in range(0, 5):
         print(items[i], itemnames[i], end=", ")
@@ -165,36 +165,36 @@ def shop():
       continue
 
     #Exits the shop
-    elif kale == 7:
+    elif option == 7:
       break
 
     #How much and whether the user is buying or selling
-    jam = valid_input("Buy (0) or Sell (1)? ", 1)
-    apple = valid_input("How much? ", shop_items[kale])
+    buy_sell = valid_input("Buy (0) or Sell (1)? ", 1)
+    how_much = valid_input("How much? ", shop_items[option])
     time.sleep(speed)
 
     #Calculates the total cost
-    cost = apple * shop_prices[kale]
+    cost = how_much * shop_prices[option]
 
     #Buying
-    if jam == 0:
+    if buy_sell == 0:
       if cost > cash: #Not enough cash
         print("You don't have enough money")
         continue
       else: #Enough cash
         cash -= cost
-        items[kale] += apple
-        shop_items[kale] -= apple
+        items[option] += how_much
+        shop_items[option] -= how_much
     
     #Selling
     else:
-      if items[kale] < apple: #Not enough items
+      if items[option] < how_much: #Not enough items
         print("You don't have enough items")
         continue
       else: #Enough items
         cash += math.floor(0.8 * cost) #Buyback is 80% of buy price
-        items[kale] -= apple
-        shop_items[kale] += apple
+        items[option] -= how_much
+        shop_items[option] += how_much
 
 shipname = ""
 shiphealth = 0
@@ -255,36 +255,36 @@ def shipyard():
     maximum += 1
     available_ships.append("Submarine")
   while True: #Purchasing loop
-    kale = valid_input("Buy (0) or Fix (1)? ", 1)
+    buy_sell = valid_input("Buy (0) or Fix (1)? ", 1)
     time.sleep(speed)
-    apple = valid_input(text, maximum)
+    ship_number = valid_input(text, maximum)
     time.sleep(speed)
-    if apple == 4 and kale == 0: #Player cannot buy the sub, only repair with the glowing rock
+    if ship_number == 4 and buy_sell == 0: #Player cannot buy the sub, only repair with the glowing rock
       print("You can't buy that")
       continue
-    elif apple == 4:
+    elif ship_number == 4:
       break
     #Checks whether you have enough to get the ship
     not_enough = 0
     for i in range(0, 4):
-      if items[i] < ship_repair[apple][i] and kale == 1:
+      if items[i] < ship_repair[ship_number][i] and buy_sell == 1:
         print("You don't have enough items")
         not_enough = 1
         break
-      elif ship_prices[apple] > cash and kale == 0:
+      elif ship_prices[ship_number] > cash and buy_sell == 0:
         print("You don't have enough cash")
         not_enough = 1
         break
     if not_enough == 1:
       continue
     break
-  if kale == 0: #Buying
-    cash -= ship_prices[apple]
-    print("You bought the", available_ships[apple])
-  elif apple != 4: #Fixing the ordinary ships
+  if buy_sell == 0: #Buying
+    cash -= ship_prices[ship_number]
+    print("You bought the", available_ships[ship_number])
+  elif ship_number != 4: #Fixing the ordinary ships
     for i in range(0, 4):
-      items[i] -= ship_repair[apple][i]
-    print("You fixed the", available_ships[apple])
+      items[i] -= ship_repair[ship_number][i]
+    print("You fixed the", available_ships[ship_number])
   else: #The glowing rock is not used up
     print("You fixed the submarine")
   time.sleep(speed)
@@ -296,9 +296,9 @@ def shipyard():
   Galleon - 4 - 20
   Submarine - 5 - 25
   """
-  shipname = available_ships[apple]
-  shipspeed = apple + 1
-  shiphealth = (apple + 1) * 5
+  shipname = available_ships[ship_number]
+  shipspeed = ship_number + 1
+  shiphealth = (ship_number + 1) * 5
   #print(shipname, shipspeed, shiphealth, cash)
   #time.sleep(speed)
 
@@ -736,6 +736,6 @@ def main():
   shop()
   shipyard()
   journey()
-  #final_score()
+  #final_score(journey())
   
 main()
