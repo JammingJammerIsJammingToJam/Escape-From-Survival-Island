@@ -9,7 +9,7 @@ Final Score:
   Scoring Calculation - Planning
   Ranks - Planning
 Story: 
-  Add story - Planning
+  Add story - Done
 Plan:
   Finish Game Plan - In Progress
   Do Coding Plan - Not Started
