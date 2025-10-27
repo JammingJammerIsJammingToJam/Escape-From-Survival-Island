@@ -152,7 +152,7 @@ def shop():
       time.sleep(speed)
     
     #Asks the user for an input
-    option = valid_input("What do you want (0) - wood... (6) - display inventory (7) - exit ", 7)
+    option = valid_input("What do you want (0) - wood ... (6) - display inventory (7) - exit ", 7)
     time.sleep(speed)
 
     #Displays the user's inventory
@@ -446,11 +446,8 @@ def journey():
           print("The", buildingnames[i], "needs", end = " ")
           for j in range(0, 2):
             print(buildingscost[i][j], itemnames[j], end = ", ")
-            time.sleep(speed)
           print(buildingscost[i][2], itemnames[2], end = " and ")
-          time.sleep(speed)
           print(buildingscost[i][3], itemnames[3], end = ".\n")
-          time.sleep(speed)
 
         thing_to_build = valid_input("What do you want to build: Net (0), Farm (1), Loom (2) or Exit (3)? ", 3)
         time.sleep(speed)
@@ -730,9 +727,136 @@ def setup():
   time.sleep(speed)
   os.system("clear")
 
+def intro():
+  global speed
+
+  #Returning players may not want the explanation
+  option = valid_input("Skip Intro (0) or Continue (1)? ", 1)
+  if option == 1:
+    return
+  os.system("clear")
+
+  #This is to take notes on values etc
+  print("Before we begin, you may need:")
+  time.sleep(speed)
+  print(" A Notepad")
+  time.sleep(speed)
+  print(" A Writing Implement")
+  time.sleep(speed)
+
+  #Waits until they want to continue
+  option = valid_input("Continue (0)? ", 0)
+  os.system("clear")
+  time.sleep(speed)
+
+  #Talks about inputs
+  print("In this game, you may be asked for input")
+  time.sleep(speed)
+  print("You have already experienced this")
+  time.sleep(speed)
+  print("You will be asked to input a number from 0 to X")
+  time.sleep(speed)
+  print("X will depend on the question")
+  time.sleep(speed)
+  print("In some cases, this will be obvious")
+  time.sleep(speed)
+  print("In others, elements of a long list may have been left out for conciseness")
+  time.sleep(speed)
+  print("This will be denoted with ...")
+  time.sleep(speed)
+  print("The elements of the list will always have been mentioned")
+  time.sleep(speed)
+
+  #Waits until they want to continue
+  option = valid_input("Continue (0)? ", 0)
+  os.system("clear")
+  time.sleep(speed)
+
+#A long series of print statements describing the opening moments of the game and assigning the glowing rock on a roughly 1 - 1.04% chance
+def opening_story():
+  global speed
+  global name
+  global items
+  global action_modifier
+
+  glowing_rock = math.ceil(random.randint(0, 100-action_modifier) / 100)
+
+  if glowing_rock:
+    items[-1] = 0
+  else:
+    items[-1] = 1
+
+  print("You wake up...")
+  time.sleep(speed)
+  print(f"You are {name}: a legend back in your world")
+  time.sleep(speed)
+  print("Yet here, you are nothing")
+  time.sleep(speed)
+  print("You don't know how you got here")
+  time.sleep(speed)
+  print("Yet something is strangely familiar")
+  time.sleep(speed)
+  print("As surely as Eleuxaos is good and Rhamnaer is evil, you know where to go")
+  time.sleep(speed)
+  print("And so you go...")
+  time.sleep(speed)
+  os.system("clear")
+
+  print("It is not long until you reach a village")
+  time.sleep(speed)
+  print("Yet this is hardly a village")
+  time.sleep(speed)
+  print("It is almost dead")
+  time.sleep(speed)
+  print("There is no hustle and bustle")
+  time.sleep(speed)
+  print("Buildings lie in ruin")
+  time.sleep(speed)
+  print("What once must've been a floundering hub of civilisation")
+  time.sleep(speed)
+  print("Is now a necropolis")
+  time.sleep(speed)
+  print("You know you need to leave as soon as possible...")
+  time.sleep(speed)
+  os.system("clear")
+
+  if not glowing_rock:
+    print("While wandering, you notice a prescence")
+    time.sleep(speed)
+    print("In your pocket is located a glowing rock")
+    time.sleep(speed)
+    print("You feel this could come in handy...")
+    time.sleep(speed)
+    os.system("clear")
+  
+  print("You notice a few buildings gathered around the port")
+  time.sleep(speed)
+  print("While not attractive by any measure, they are inhabited")
+  time.sleep(speed)
+  print("You come across a worn-down shop")
+  time.sleep(speed)
+  print("You decide this is your best course of action...")
+  time.sleep(speed)
+  os.system("clear")
+
+#A shorter series of print statements to provide a short story in the shop-shipyard transition
+def shop_to_shipyard():
+  global speed
+
+  os.system("clear")
+  
+  print("Having acquired what you needed for the journey, you look around")
+  time.sleep(speed)
+  print("You realise that a naval vessel is your only means of escape")
+  time.sleep(speed)
+  print("You make your way down to the shipyard...")
+  time.sleep(speed)
+
 #Gameplay loop
 def main():
   setup()
+  intro()
+  opening_story()
   shop()
   shipyard()
   journey()
