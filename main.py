@@ -4,7 +4,7 @@ Journey:
   Building - Done
   Repair - Done
   Random Events - Done
-  Calculations Phase - In Progress
+  Calculations Phase - Done
 Final Score:
   Scoring Calculation
   Ranks
@@ -159,6 +159,7 @@ def shop():
       for i in range(0, 5):
         print(items[i], itemnames[i], end=", ")
       print(items[5], itemnames[5], end=".\n")
+      time.sleep(speed)
       continue
 
     #Exits the shop
@@ -356,14 +357,18 @@ def journey():
             "Rhamnaer strikes you with his Karambit!"]
   while True:
     days += 1
+    print("****************************")
+    time.sleep(speed)
+    print("It is Day", days, "of the voyage")
+    time.sleep(speed)
     while True:
       #Status report
-      print("It is Day", days, "of the voyage")
+      print("\n")
       print("Your health is at", str(health) + "/" + str(max_health))
       print("Your hunger is at", str(hunger) + "/100")
       print("Your shiphealth is at", str(shiphealth) + "/" + str(maxship))
       #Possible Actions
-      action = valid_input("Repair the " + shipname + " (0), Build (1), Eat Food (2), Use Bandages (3), View Inventory (4), or Set Sail (5)", 5)
+      action = valid_input("Repair the " + shipname + " (0), Build (1), Eat Food (2), Use Bandages (3), View Inventory (4), or Set Sail (5)? ", 5)
       if action == 5: #Set Sail
         print("The", shipname, "sets sail!")
         break
@@ -374,15 +379,18 @@ def journey():
           print(items[i], itemnames[i], end=", ")
         print(items[5], itemnames[5], end=" and ")
         print(cash, "cash", end=".\n")
+        time.sleep(speed)
         continue
       elif action == 3: #Use Bandages
         if items[4] == 0:
           print("You don't have any bandages!")
+          time.sleep(speed)
           continue
         #Calculates the maximum number of bandages
         deficit = max_health - health
         if deficit == 0: #No bandages needed
           print("You are at max health")
+          time.sleep(speed)
           continue
         maxbandage = math.ceil(deficit / 3) #3HP = 1 Bandage
         if items[4] < maxbandage: #You don't have enough for full health
@@ -396,15 +404,21 @@ def journey():
         #Calculates new health
         if bandages <= deficit:
           health += bandages
+          print(f"You healed {bandages} HP!")
         else:
           health += deficit
+          print(f"You healed {deficit} HP!")
+        time.sleep(speed)
       elif action == 2: #Eating food
         #Checks for hunger and inventory
         if items[5] == 0:
           print("You don't have any food!")
+          time.sleep(speed)
+          continue
         deficit = 100 - hunger #Hunger is calculated as Hunger/100
         if deficit == 0:
           print("You aren't hungry")
+          time.sleep(speed)
           continue
         maxfood = math.ceil(deficit / 5) #5HP = 1 Food
         if items[5] < maxfood: #Not enough food for full hunger
@@ -418,8 +432,11 @@ def journey():
         #Calculates new hunger
         if food <= deficit:
           hunger += food
+          print(f"You gained {food} hunger!")
         else:
           hunger += deficit
+          print(f"You gained {deficit} hunger!")
+        time.sleep(speed)
       elif action == 1: #Building
         #Outputs the buildings' cost
         for i in range(0, 3):
@@ -430,6 +447,7 @@ def journey():
           print(buildingscost[i][2], itemnames[2], end = " and ")
           time.sleep(speed)
           print(buildingscost[i][3], itemnames[3], end = ".\n")
+          time.sleep(speed)
 
         thing_to_build = valid_input("What do you want to build: Net (0), Farm (1), Loom (2) or Exit (3)? ", 3)
         time.sleep(speed)
@@ -445,6 +463,7 @@ def journey():
             not_enough = 1
             break
         if not_enough == 1:
+          time.sleep(speed)
           continue
 
         for i in range(0, 4): #Removes items from inventory
@@ -618,14 +637,14 @@ def journey():
     
     #Calculates items gained from nets
     changes = [0, 0, 0, 0, 0]
-    for i in range(buildings[i]):
+    for i in range(buildings[0]):
       changes[random.randint(0, 5)] += 1
     for i in range(4):
       change = sum(random.randint(0, 1+action_modifier) for j in range(changes[i]))
       print(f"Your nets gathered {change} {itemnames[i]}!")
       items[i] += change
       time.sleep(speed)
-    change = sum(random.randint(0, 1+action_modifier) for j in range(changes[5]))
+    change = sum(random.randint(0, 1+action_modifier) for j in range(changes[4]))
     print(f"Your nets gathered {change} fish!")
     items[5] += change
     time.sleep(speed)
