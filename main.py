@@ -107,7 +107,11 @@ def character_creation():
   maximum = 3
   if points < 9:
     maximum = math.floor(points/3)
-  action_modifier = valid_input("How many points for the action modifier? (1 AM for 3 points) (max input is 3AM) ", maximum)
+  print("The action modifier changes the results of random rolls")
+  print("For 1 AM, you need 3 points")
+  print("You need to input the number of AM you want")
+  print("For instance, if you enter 2, you spend 6 points")
+  action_modifier = valid_input("How many points for the action modifier? ", maximum)
   points -= action_modifier * 3
   time.sleep(speed)
   del maximum
