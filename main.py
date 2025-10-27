@@ -3,8 +3,8 @@ TODO:
 Journey:
   Building - Done
   Repair - Done
-  Random Events - Planning
-  Calculations Phase - Not Started
+  Random Events - Done
+  Calculations Phase - In Progress
 Final Score:
   Scoring Calculation
   Ranks
@@ -332,7 +332,7 @@ def journey():
   #Action Phase
   current_repair = random.randint(0, 4) #What the ship currently needs for repair
   repair_amount = random.randint(1, 6 - action_modifier)
-  #Initialises 19 events
+  #Initialises 20 events
   #You have a chance at reaching land after day 5
   events = ["You Arrive at Land - Your Journey is Over!",
             "You encounter a Floating Trading Post",
@@ -342,15 +342,15 @@ def journey():
             "You Pray To Eleuxaos and you are granted a boon!",
             "You get a wonderful night's sleep", 
             "A fish washes up on your boat", 
-            "8", 
-            "9", 
-            "10",
-            "11", 
-            "12", 
-            "13", 
+            "You ride the currents - travelling twice as far today!", 
+            "You find some flotsam floating", 
+            "The Angels of Eleuxaos get to work!",
+            "The winds were unfavourable - you traveled half as far...", 
+            "You got scurvy from a lack of Vitamin C", 
+            "You are attacked by a Pirate Crew", 
             "You get a fever!", 
             "You pray to Eleuxaos but nothing appears...",
-            "Some of your supplies are washed away...", 
+            "Some of your supplies are washed away by a wave...", 
             "A Storm batters you and your ship", 
             "A Kraken attacks your ship!", 
             "Rhamnaer strikes you with his Karambit!"]
@@ -479,6 +479,7 @@ def journey():
         else:
           shiphealth += 5
     #Event Phase
+    distance_multiplier = 1
     if days < 5:
       event = random.randint(1, len(events) - action_modifier - 1)
     else:
@@ -495,7 +496,7 @@ def journey():
         items[i] += change
         print("You received", change, itemnames[i], "!")
         time.sleep(speed)
-    elif event == 6: #Good night's sleep
+    elif event == 6: #Good night's sleep - heals
       deficit = max_health - health
       change = random.randint(1, 3+action_modifier)
       if deficit == 0:
@@ -507,28 +508,53 @@ def journey():
         health += change
         print("You gained", change, "health!")
       time.sleep()
-    elif event == 7: #Fish on your boat
+    elif event == 7: #Fish on your boat - gives food
       change = random.randint(1, 3+action_modifier)
       items[5] += change
       print("You gained", change, "food!")
       time.sleep(speed)
-    elif event == 8:
-      
-    elif event == 9:
-
-    elif event == 10:
+    elif event == 8: #Currents - 2x dist
+      distance_multiplier = 2
+    elif event == 9: #Flotsam - gives items
+      picked_item = random.randint(0, 4)
+      change = random.randint(1, 3+action_modifier)
+      print(f"You picked up {change} {itemnames[picked_item]}!")
+      items[picked_item] += change
+      time.sleep(speed)
+      del picked_item
+    elif event == 10: #Random building
+      thing_to_build = random.randint(0, 3)
+      print(f"The Angels bless you with a new {buildingnames[thing_to_build]}!")
+      buildings[thing_to_build] += 1
+    elif event == 11: #Bad winds - 0.5x dist
+      distance_multiplier = 0.5
+    elif event == 12: #Scurvy - Deals damage
+      change = random.randint(1, 5-action_modifier)
+      health -= change
+      print(f"You took {change} damage!")
+      time.sleep(speed)
+    elif event == 13: #Pirates - lose items
+      for i in range(0, 4):
+        if items[i] < 3:
+          maximum = items[i]
+        else:
+          maximum = 3
+        change = random.randint(0, maximum)
+        if change == 0:
+          print(f"You lost no {itemnames[i]}!")
+        else:
+          print(f"You lost {change} {itemnames[i]}!")
+        time.sleep(speed)
+        items[i] -= change
+    elif event == 14: #Fever - Deals damage
+      change = random.randint(1, 5-action_modifier)
+      health -= change
+      print(f"You took {change} damage!")
+      time.sleep(speed)
     
-    elif event == 11:
-
-    elif event == 12:
-
-    elif event == 13:
-
-    elif event == 14: #Fever
-
     #15 - nothing happens
 
-    elif event == 16: #Supplies washed away
+    elif event == 16: #Supplies washed away - lose items
       for i in range(0, 6):
         if items[i] == 0:
           print("You didn't have any", itemnames[i], "in the first place!")
@@ -542,23 +568,88 @@ def journey():
           items[i] -= change
           print("You lost", change, itemnames[i], end = "!\n")
         time.sleep(speed)
-    elif event == 17: #Storm
+    elif event == 17: #Storm - deals damage to player and ship
+      change = random.randint(1, 5-action_modifier)
+      health -= change
+      print(f"You took {change} damage!")
+      time.sleep(speed)
+      change = random.randint(1, 7-action_modifier)
+      shiphealth -= change
+      print(f"Your ship took {change} damage!")
+      time.sleep(speed)
+    elif event == 18: #Kraken - deals damage to player and ship
+      change = random.randint(1, 6-action_modifier)
+      health -= change
+      print(f"You took {change} damage!")
+      time.sleep(speed)
+      change = random.randint(1, 8-action_modifier)
+      shiphealth -= change
+      print(f"Your ship took {change} damage!")
+      time.sleep(speed)
+    elif event == 19: #Rhamnaer and his karambit - deals damage to player and ship
+      change = random.randint(1, 7-action_modifier)
+      health -= change
+      print(f"You took {change} damage!")
+      time.sleep(speed)
+      change = random.randint(1, 9-action_modifier)
+      shiphealth -= change
+      print(f"Your ship took {change} damage!")
+      time.sleep(speed)
 
-    elif event == 18: #Kraken
+    #Hunger Check
+    if hunger == 0:
+      change = random.randint(0, 4-action_modifier)
+      health -= change
+      print(f"You lost {change} health due to starvation!")
 
-    elif event == 19: #Rhamnaer and his karambit
-
-    
     #Death Check
     if health <= 0:
+      print("You died!")
+      time.sleep(speed)
       return 1
     if shiphealth <= 0:
+      print(f"Your {shipname} broke!")
       return 1
   
     #Calculations Phase
+    hunger -= random.randint(5, 10-action_modifier)  #Calculates hunger
+    if hunger < 0:
+      hunger = 0
+    
+    #Calculates items gained from nets
+    changes = [0, 0, 0, 0, 0]
+    for i in range(buildings[i]):
+      changes[random.randint(0, 5)] += 1
+    for i in range(4):
+      change = sum(random.randint(0, 1+action_modifier) for j in range(changes[i]))
+      print(f"Your nets gathered {change} {itemnames[i]}!")
+      items[i] += change
+      time.sleep(speed)
+    change = sum(random.randint(0, 1+action_modifier) for j in range(changes[5]))
+    print(f"Your nets gathered {change} fish!")
+    items[5] += change
+    time.sleep(speed)
+
+    #Calculates items gained from farms
+    change = sum(random.randint(0, 2+action_modifier) for i in range(buildings[1]))
+    print(f"You gained {change} food from your farms!")
+    items[5] += change
+    time.sleep(speed)
+
+    #Calculates loom bandage production
+    change = sum(random.randint(0, 1) for i in range(buildings[2]))
+    print(f"You gained {change} bandages from your looms")
+    items[4] += change
+    time.sleep(speed)
+
+    #Calculates distance travelled
+    change = random.randint(1, 3+action_modifier) * shipspeed * distance_multiplier
+    distance += change
+    print(f"You sailed {change} miles!")
+    time.sleep(speed)
 
 #Final Score
-#def final_score():
+#def final_score(outcome):
   #score = 0
 
   #return score
