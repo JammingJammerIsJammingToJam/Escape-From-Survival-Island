@@ -6,17 +6,17 @@ Journey: - Done
   Random Events - Done
   Calculations Phase - Done
 Final Score:
-  Scoring Calculation - Planning
-  Ranks - Planning
+  Scoring Calculation - Done
+  Ranks - Done
 Story: 
   Add story - Done
 Plan:
   Finish Game Plan - In Progress
   Do Coding Plan - Not Started
 Sleep:
-  Add time.sleep(speed) anywhere necessary - In Progress
+  Add time.sleep(speed) anywhere necessary - Done as far as I can tell
 Comments:
-  Add comments
+  Add comments - Mostly done
 Bug Fixing:
   Find bugs
   Fix bugs
@@ -174,7 +174,10 @@ def shop():
 
     #How much and whether the user is buying or selling
     buy_sell = valid_input("Buy (0) or Sell (1)? ", 1)
-    how_much = valid_input("How much? ", shop_items[option])
+    if buy_sell == 0:
+      how_much = valid_input("How much? ", shop_items[option])
+    else:
+      how_much = valid_input("How much? ", items[option])
     time.sleep(speed)
 
     #Calculates the total cost
@@ -309,6 +312,7 @@ def shipyard():
 
 days = 0
 distance = 0
+health = 0
 #Journey
 def journey():
   global days
@@ -323,6 +327,7 @@ def journey():
   global name
   global max_health
   global distance
+  global health
   health = max_health
   hunger = 100
   #Net (Pick up raw materials and occasionally fish) - Farm (Food) - Loom (Bandages)
@@ -363,6 +368,7 @@ def journey():
             "A Storm batters you and your ship", 
             "A Kraken attacks your ship!", 
             "Rhamnaer strikes you with his Karambit!"]
+  os.system("clear")
   while True:
     days += 1
     time.sleep(speed)
@@ -644,7 +650,7 @@ def journey():
     #Ship Broken Check
     if shiphealth <= 0:
       print(f"Your {shipname} broke!")
-      return 1
+      return 2
   
     #Calculations Phase
     hunger -= random.randint(5, 10-action_modifier)  #Calculates new hunger value
@@ -689,10 +695,77 @@ def journey():
     print("")
 
 #Final Score
-#def final_score(outcome):
-  #score = 0
+def final_score(outcome):
+  global difficulty
+  global distance
+  global items
+  global speed
+  global name
+  global shipname
+  global days
 
-  #return score
+  difficulties = ["easy", "standard", "hard", "very hard", "extreme"]
+  score = 0
+  score_mult = 1
+
+  os.system("clear")
+  print(f"This was the story of {name}")
+  time.sleep(speed)
+  print(f"{name} sailed this strange world on their {shipname}!")
+  time.sleep(speed)
+  print("")
+  print(f"It took them {days} days...")
+  time.sleep(speed)
+  if outcome == 0:
+    print("And they completed their journey!")
+    score += 1000
+    time.sleep(speed)
+    print("+1000 score")
+  if outcome == 1:
+    print("But they died along the way!")
+  if outcome == 2:
+    print(f"But their {shipname} broke!")
+  time.sleep(speed)
+  print("")
+  print(f"Theirs was a {difficulties[difficulty]} journey")
+  score_mult = (difficulty + 1) / 2
+  time.sleep(speed)
+  print(f"x{score_mult} Multiplier!")
+  time.sleep(speed)
+  print("")
+  print(f"{name} travelled far")
+  time.sleep(speed)
+  print(f"Over the course of {days}...")
+  time.sleep(speed)
+  score += days * 50
+  print(f"+{days * 50} score")
+  time.sleep(speed)
+  print(f"They travelled {distance} miles")
+  time.sleep(speed)
+  score += distance * 10
+  print(f"+{distance * 10} score")
+  time.sleep(speed)
+  print("")
+  print("Along the way, many items were gathered")
+  time.sleep(speed)
+  print(f"{items[0]} {itemnames[0]}, {items[1]} {itemnames[1]}, {items[2]} {itemnames[2]}, {items[3]} {itemnames[3]}, {items[4]} {itemnames[4]} and {items[5]} {itemnames[5]}!")
+  time.sleep(speed)
+  itemsum = sum(items[i] * 5 for i in range(0, 5))
+  print(f"+{itemsum} score")
+  score += itemsum
+  time.sleep(speed)
+  print("")
+  finalscore = score * score_mult
+  print(f"This means a final score of {finalscore}!")
+  time.sleep(speed)
+  rank = math.floor(math.log10(finalscore))
+  ranks = ["F", "D", "C", "B", "A", "S"]
+  print(f"Equivalent to a rank of {ranks[rank]}!")
+  time.sleep(speed)
+  print("Thanks for playing!")
+  time.sleep(speed)
+  option = valid_input("Continue (0)? ", 0)
+  return finalscore
 
 #Setup
 def setup():
@@ -804,6 +877,7 @@ def opening_story():
   time.sleep(speed)
   print("And so you go...")
   time.sleep(speed)
+  option = valid_input("Continue (0)? ", 0)
   os.system("clear")
 
   print("It is not long until you reach a village")
@@ -822,6 +896,7 @@ def opening_story():
   time.sleep(speed)
   print("You know you need to leave as soon as possible...")
   time.sleep(speed)
+  option = valid_input("Continue (0)? ", 0)
   os.system("clear")
 
   if not glowing_rock:
@@ -831,6 +906,7 @@ def opening_story():
     time.sleep(speed)
     print("You feel this could come in handy...")
     time.sleep(speed)
+    option = valid_input("Continue (0)? ", 0)
     os.system("clear")
   
   print("You notice a few buildings gathered around the port")
@@ -841,6 +917,7 @@ def opening_story():
   time.sleep(speed)
   print("You decide this is your best course of action...")
   time.sleep(speed)
+  option = valid_input("Continue (0)? ", 0)
   os.system("clear")
 
 #A shorter series of print statements to provide a short story in the shop-shipyard transition
@@ -854,6 +931,7 @@ def shop_to_shipyard():
   print("You realise that a naval vessel is your only means of escape")
   time.sleep(speed)
   print("You make your way down to the shipyard...")
+  option = valid_input("Continue (0)? ", 0)
   time.sleep(speed)
 
 #Gameplay loop
