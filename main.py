@@ -103,16 +103,16 @@ def character_creation():
   time.sleep(speed)
 
   """ Invest points into the Action Modifier that is added or subtracted from rolls for an advantage
-  Created by the formula AM = 3P """
-  maximum = 3
-  if points < 9:
-    maximum = math.floor(points/3)
+  Created by the formula AM = 5P """
+  maximum = 5
+  if points < 15:
+    maximum = math.floor(points/5)
   print("The action modifier changes the results of random rolls")
-  print("For 1 AM, you need 3 points")
+  print("For 1 AM, you need 5 points")
   print("You need to input the number of AM you want")
-  print("For instance, if you enter 2, you spend 6 points")
+  print("For instance, if you enter 2, you spend 10 points")
   action_modifier = valid_input("How many points for the action modifier? ", maximum)
-  points -= action_modifier * 3
+  points -= action_modifier * 5
   time.sleep(speed)
   del maximum
 
@@ -352,7 +352,7 @@ def journey():
             "You encounter a Floating Trading Post",
             "You encounter a Floating Trading Post",
             "You encounter a Floating Trading Post",
-            "You encounter a Floating Trading Post",
+            "Your ship scrapes the seabed!",
             "You Pray To Eleuxaos and you are granted a boon!",
             "You get a wonderful night's sleep", 
             "A fish washes up on your boat", 
@@ -519,13 +519,18 @@ def journey():
     time.sleep(speed)
     if event == 0: #Arrival - ends game
       return 0
-    elif event in [1, 2, 3, 4]: #Trading Post - shop 
+    elif event in [1, 2, 3]: #Trading Post - shop 
       shop()
+    elif event == 4: #Seabed - ship damage
+      change = random.randint(1, 7-action_modifier)
+      shiphealth -= change
+      print(f"You took {change} damage!")
+      time.sleep(speed)
     elif event == 5: #Successful Prayer - gives items
       for i in range(0, 6):
-        change = random.randint(1, 3+action_modifier)
+        change = random.randint(1, 2+action_modifier)
         items[i] += change
-        print("You received", change, itemnames[i], "!")
+        print("You received", change, itemnames[i], end="!\n")
         time.sleep(speed)
     elif event == 6: #Good night's sleep - heals
       deficit = max_health - health
@@ -561,7 +566,7 @@ def journey():
     elif event == 11: #Bad winds - 0.5x dist
       distance_multiplier = 0.5
     elif event == 12: #Scurvy - Deals damage
-      change = random.randint(1, 5-action_modifier)
+      change = random.randint(1, 7-action_modifier)
       health -= change
       print(f"You took {change} damage!")
       time.sleep(speed)
@@ -579,7 +584,7 @@ def journey():
         time.sleep(speed)
         items[i] -= change
     elif event == 14: #Fever - Deals damage
-      change = random.randint(1, 5-action_modifier)
+      change = random.randint(1, 7-action_modifier)
       health -= change
       print(f"You took {change} damage!")
       time.sleep(speed)
@@ -603,18 +608,7 @@ def journey():
     
     elif event == 17: #Storm - deals damage to player and ship
       #Player Damage
-      change = random.randint(1, 5-action_modifier)
-      health -= change
-      print(f"You took {change} damage!")
-      time.sleep(speed)
-      #Ship Damage
       change = random.randint(1, 7-action_modifier)
-      shiphealth -= change
-      print(f"Your ship took {change} damage!")
-      time.sleep(speed)
-    elif event == 18: #Kraken - deals damage to player and ship
-      #Player Damage
-      change = random.randint(1, 6-action_modifier)
       health -= change
       print(f"You took {change} damage!")
       time.sleep(speed)
@@ -623,14 +617,25 @@ def journey():
       shiphealth -= change
       print(f"Your ship took {change} damage!")
       time.sleep(speed)
-    elif event == 19: #Rhamnaer and his karambit - deals damage to player and ship
+    elif event == 18: #Kraken - deals damage to player and ship
       #Player Damage
-      change = random.randint(1, 7-action_modifier)
+      change = random.randint(1, 8-action_modifier)
       health -= change
       print(f"You took {change} damage!")
       time.sleep(speed)
       #Ship Damage
+      change = random.randint(1, 10-action_modifier)
+      shiphealth -= change
+      print(f"Your ship took {change} damage!")
+      time.sleep(speed)
+    elif event == 19: #Rhamnaer and his karambit - deals damage to player and ship
+      #Player Damage
       change = random.randint(1, 9-action_modifier)
+      health -= change
+      print(f"You took {change} damage!")
+      time.sleep(speed)
+      #Ship Damage
+      change = random.randint(1, 11-action_modifier)
       shiphealth -= change
       print(f"Your ship took {change} damage!")
       time.sleep(speed)
@@ -660,7 +665,7 @@ def journey():
     #Calculates items gained from nets
     changes = [0, 0, 0, 0, 0]
     for i in range(buildings[0]): #Which nets got which stuff
-      changes[random.randint(0, 5)] += 1
+      changes[random.randint(0, 4)] += 1
     for i in range(4): #How much of said stuff did the nets gather
       change = sum(random.randint(0, 1+action_modifier) for j in range(changes[i]))
       print(f"Your nets gathered {change} {itemnames[i]}!")
@@ -684,7 +689,7 @@ def journey():
     time.sleep(speed)
 
     #Calculates distance travelled
-    change = random.randint(1, 3+action_modifier) * shipspeed * distance_multiplier
+    change = int(random.randint(1, 3+action_modifier) * shipspeed * distance_multiplier)
     distance += change
     print(f"You sailed {change} miles!")
     time.sleep(speed)
@@ -716,9 +721,10 @@ def final_score(outcome):
   print("")
   print(f"It took them {days} days...")
   time.sleep(speed)
+  #Gives5000 points if the journey was completed
   if outcome == 0:
     print("And they completed their journey!")
-    score += 1000
+    score += 5000
     time.sleep(speed)
     print("+1000 score")
   if outcome == 1:
@@ -728,6 +734,7 @@ def final_score(outcome):
   time.sleep(speed)
   print("")
   print(f"Theirs was a {difficulties[difficulty]} journey")
+  #Multiplies the final score by (D+1)/2 eg easy is 0.5x modifier and extreme is 3x
   score_mult = (difficulty + 1) / 2
   time.sleep(speed)
   print(f"x{score_mult} Multiplier!")
@@ -735,13 +742,15 @@ def final_score(outcome):
   print("")
   print(f"{name} travelled far")
   time.sleep(speed)
-  print(f"Over the course of {days}...")
+  print(f"Over the course of {days} days...")
   time.sleep(speed)
+  #50 Points per day
   score += days * 50
   print(f"+{days * 50} score")
   time.sleep(speed)
   print(f"They travelled {distance} miles")
   time.sleep(speed)
+  #10 points per mile travelled
   score += distance * 10
   print(f"+{distance * 10} score")
   time.sleep(speed)
@@ -750,22 +759,30 @@ def final_score(outcome):
   time.sleep(speed)
   print(f"{items[0]} {itemnames[0]}, {items[1]} {itemnames[1]}, {items[2]} {itemnames[2]}, {items[3]} {itemnames[3]}, {items[4]} {itemnames[4]} and {items[5]} {itemnames[5]}!")
   time.sleep(speed)
+  #5 points for every item
   itemsum = sum(items[i] * 5 for i in range(0, 5))
   print(f"+{itemsum} score")
   score += itemsum
+  time.sleep(speed)
+  print(f"Furthermore, {cash} cash was gathered!")
+  #4 points per cash
+  score += cash * 4
+  print(f"+{cash * 4} score")
   time.sleep(speed)
   print("")
   finalscore = score * score_mult
   print(f"This means a final score of {finalscore}!")
   time.sleep(speed)
-  rank = math.floor(math.log10(finalscore))
+  rank = math.floor(math.log10(finalscore / 5))
+  #F is not possible but is there to make the other ranks harder to achieve
+  #The points necessary are 0, 50, 500, 5000, 50000 and 500000 respectively
   ranks = ["F", "D", "C", "B", "A", "S"]
   print(f"Equivalent to a rank of {ranks[rank]}!")
   time.sleep(speed)
   print("Thanks for playing!")
   time.sleep(speed)
   option = valid_input("Continue (0)? ", 0)
-  return finalscore
+  return int(finalscore)
 
 #Setup
 def setup():
@@ -842,6 +859,8 @@ def intro():
   print("This will be denoted with ...")
   time.sleep(speed)
   print("The elements of the list will always have been mentioned")
+  time.sleep(speed)
+  print("Furthermore, spamming keys may have unintended consequences so please refrain from doing so")
   time.sleep(speed)
 
   #Waits until they want to continue
@@ -941,7 +960,6 @@ def main():
   opening_story()
   shop()
   shipyard()
-  journey()
-  #final_score(journey())
-  
+  final_score(journey())
+
 main()
