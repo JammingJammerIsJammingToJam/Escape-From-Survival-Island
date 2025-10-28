@@ -11,19 +11,18 @@ Final Score:
 Story: 
   Add story - Done
 Plan:
-  Finish Game Plan - In Progress
-  Do Coding Plan - Not Started
+  Game Plan - Done
+  Coding Plan - Done
 Sleep:
-  Add time.sleep(speed) anywhere necessary - Done as far as I can tell
+  Add time.sleep(speed) anywhere necessary - Done
 Comments:
-  Add comments - Mostly done
-Bug Fixing:
+  Add comments - Done
+Bug Fixing: - THIS
   Find bugs
   Fix bugs
 Variables:
   Fix Variable Names - Done
 """
-
 
 #Libraries
 import random
@@ -344,7 +343,7 @@ def journey():
   """
   buildingscost = [[random.randint(4 - action_modifier, 8 - action_modifier) for i in range(0, 4)] for j in range(0, 3)]
   #Action Phase
-  current_repair = random.randint(0, 4) #What the ship currently needs for repair
+  current_repair = random.randint(0, 3) #What the ship currently needs for repair
   repair_amount = random.randint(1, 6 - action_modifier)
   #Initialises 20 events
   #You have a chance at reaching land after day 5
