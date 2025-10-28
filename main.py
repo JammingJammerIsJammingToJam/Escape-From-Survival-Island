@@ -825,7 +825,7 @@ def intro():
 
   #Returning players may not want the explanation
   option = valid_input("Skip Intro (0) or Continue (1)? ", 1)
-  if option == 1:
+  if option == 0:
     return
   os.system("clear")
 
