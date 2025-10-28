@@ -523,7 +523,7 @@ def journey():
     elif event == 4: #Seabed - ship damage
       change = random.randint(1, 7-action_modifier)
       shiphealth -= change
-      print(f"You took {change} damage!")
+      print(f"Your ship took {change} damage!")
       time.sleep(speed)
     elif event == 5: #Successful Prayer - gives items
       for i in range(0, 6):
@@ -725,7 +725,7 @@ def final_score(outcome):
     print("And they completed their journey!")
     score += 5000
     time.sleep(speed)
-    print("+1000 score")
+    print("+5000 score")
   if outcome == 1:
     print("But they died along the way!")
   if outcome == 2:
